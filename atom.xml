@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-05-21T14:32:49.029Z</updated>
+    <updated>2020-05-21T15:32:06.945Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,66 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[SpringBoot捕获全局异常]]></title>
+        <id>https://yeyouluo.github.io/post/springboot-bu-huo-quan-ju-yi-chang/</id>
+        <link href="https://yeyouluo.github.io/post/springboot-bu-huo-quan-ju-yi-chang/">
+        </link>
+        <updated>2020-05-21T15:16:14.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="理论">理论</h2>
+<ul>
+<li>从 spring 3.2 开始，新增了 <code>@ControllerAdvice</code> 注解，可以用于定义 <code>@ExceptionHandler</code>，并应用到配置了 <code>@RequestMapping</code> 的控制器中。</li>
+</ul>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="理论">理论</h2>
+<ul>
+<li>
+<p>从 spring 3.2 开始，新增了 <code>@ControllerAdvice</code> 注解，可以用于定义 <code>@ExceptionHandler</code>，并应用到配置了 <code>@RequestMapping</code> 的控制器中。</p>
+<!-- more -->
+<h2 id="操作">操作</h2>
+<ol>
+<li>定义全局异常捕捉Controller</li>
+</ol>
+<pre><code class="language-java">package com.yeyouluo.hellospringboot.exception;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(value = RuntimeException.class)
+    @ResponseBody
+    public String handle() {
+        return &quot;捕获到全局RuntimeException&quot;;
+    }
+}
+</code></pre>
+</li>
+</ul>
+<ol start="2">
+<li>抛出异常<pre><code class="language-java">@GetMapping(&quot;/exception&quot;)
+ public String testException(){
+     System.out.println(&quot;开始&quot;);
+
+     System.out.println(2/0);
+
+     System.out.println(&quot;结束&quot;);
+     return &quot;SpringBoot OK&quot;;
+ }
+</code></pre>
+</li>
+<li>结果验证<br>
+<img src="https://yeyouluo.github.io/post-images/1590075093881.png" alt="" loading="lazy"></li>
+</ol>
+<h2 id="局限">局限</h2>
+<p>使用 <code>@ControllerAdvice</code>处理异常也有一定的 局限性。只有进入 Controller 层的错误，才会由 <code>@ControllerAdvice</code> 处理。拦截器 抛出的错误，以及 访问错误地址 的情况 <code>@ControllerAdvice</code> 处理不了，由 Spring Boot 默认的 异常处理机制 处理。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://blog.csdn.net/baidu_22254181/java/article/details/80789076">实战Spring Boot 2.0系列(二) - 全局异常处理和测试</a></li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SpringBoot访问静态文件]]></title>
         <id>https://yeyouluo.github.io/post/springboot-fang-wen-jing-tai-wen-jian/</id>
@@ -100,11 +160,48 @@ public class HelloController {
 ]]></content>
     </entry>
     <entry>
+        <title type="html"><![CDATA[SpringBoot资源整理]]></title>
+        <id>https://yeyouluo.github.io/post/springboot-zi-yuan-zheng-li/</id>
+        <link href="https://yeyouluo.github.io/post/springboot-zi-yuan-zheng-li/">
+        </link>
+        <updated>2020-05-21T12:04:03.000Z</updated>
+        <summary type="html"><![CDATA[<p>本文主要收集SpringBoot网络资源。该文章会持续更新。<br>
+若收录的资源涉及版权问题，请及时联系，我会予以删除整改。</p>
+<h2 id="书籍">书籍</h2>
+<ul>
+<li><a href="http://blog.didispace.com/books/spring-boot-reference/">Spring Boot参考指南</a></li>
+</ul>
+]]></summary>
+        <content type="html"><![CDATA[<p>本文主要收集SpringBoot网络资源。该文章会持续更新。<br>
+若收录的资源涉及版权问题，请及时联系，我会予以删除整改。</p>
+<h2 id="书籍">书籍</h2>
+<ul>
+<li><a href="http://blog.didispace.com/books/spring-boot-reference/">Spring Boot参考指南</a><!-- more -->
+</li>
+</ul>
+<h2 id="网站">网站</h2>
+<ul>
+<li><a href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/">SpringBoot官方文档</a></li>
+</ul>
+<h2 id="github项目">Github项目</h2>
+<ul>
+<li><a href="https://github.com/ityouknow/spring-boot-examples">spring-boot-examples</a></li>
+<li><a href="https://github.com/ityouknow/awesome-spring-boot">awesome-spring-boot</a></li>
+<li><a href="https://github.com/wuyouzhuguli/SpringAll">SpringAll</a></li>
+</ul>
+<h2 id="视频">视频</h2>
+<p>码家学院教程：<a href="https://pan.baidu.com/s/1Yv1ttP1_b6ORrTGLPQ1n1g">https://pan.baidu.com/s/1Yv1ttP1_b6ORrTGLPQ1n1g</a> 提取码：gcjo</p>
+<blockquote>
+<p>后续的几篇文章都是基于该视频，在此感谢~</p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[从hexo迁移到Gridea]]></title>
         <id>https://yeyouluo.github.io/post/hexo-to-gridea/</id>
         <link href="https://yeyouluo.github.io/post/hexo-to-gridea/">
         </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
+        <updated>2020-05-20T14:36:03.000Z</updated>
         <summary type="html"><![CDATA[<p>自从发现了Gridea这个静态博客写作神奇，直接抛弃了hexo。<br>
 为什么呢？<br>
 因为使用超级简单！</p>
