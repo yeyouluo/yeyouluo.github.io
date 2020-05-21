@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-05-21T13:33:18.152Z</updated>
+    <updated>2020-05-21T14:21:21.577Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,73 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[第一个SpringBoot程序]]></title>
+        <id>https://yeyouluo.github.io/post/springboot-01-hello-world/</id>
+        <link href="https://yeyouluo.github.io/post/springboot-01-hello-world/">
+        </link>
+        <updated>2020-05-21T13:39:00.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="使用springboot-initializer创建项目">使用SpringBoot   initializer创建项目</h2>
+<p>spring官方：https://start.springboot.io/<br>
+阿里云：https://start.aliyun.com/<br>
+Idea内置的initializer是spring官方的。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="使用springboot-initializer创建项目">使用SpringBoot   initializer创建项目</h2>
+<p>spring官方：https://start.springboot.io/<br>
+阿里云：https://start.aliyun.com/<br>
+Idea内置的initializer是spring官方的。</p>
+<!-- more -->
+<h2 id="springboot官方文档">SpringBoot官方文档</h2>
+<p>https://spring.io/projects/spring-boot</p>
+<h2 id="步骤">步骤</h2>
+<h3 id="生成项目">生成项目</h3>
+<p><img src="https://yeyouluo.github.io/post-images/1590069974434.png" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1590069986825.png" alt="" loading="lazy"></p>
+<h3 id="编写controller">编写Controller</h3>
+<p>要点：</p>
+<ul>
+<li>在入口类<code>HelloSpringbootApplication</code>平级目录建立Controller目录</li>
+<li>Controller类使用<code>@RestController</code>或<code>@Controller</code>注解</li>
+</ul>
+<blockquote>
+<p>查看源码，<code>@RestController</code>比<code>@Controller</code>多一个<code>@ResponseBody</code>注解，因此只能返回JSON值。如果要返回页面，应使用<code>@Controller</code>注解Controller类。</p>
+</blockquote>
+<ul>
+<li>
+<p>方法上使用<code>@RequestMapping</code>或<code>@GetMapping</code>注解</p>
+<p>示例：</p>
+<pre><code class="language-java">package com.yeyouluo.hellospringboot.controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+@RestController
+public class HelloController {
+//    @GetMapping(value=&quot;/hello&quot;)
+//    public String sayHello(String name){
+//        return &quot;hello,&quot; + name;
+//    }
+//    @GetMapping(value=&quot;/hello&quot;)
+//    public String sayHello(@RequestParam(value = &quot;name&quot;, required = false) String name){
+//        return &quot;hello,&quot; + name;
+//    }
+    @GetMapping(value=&quot;/hello/{name}&quot;)
+    public String sayHello(@PathVariable String name){
+    return &quot;hello,&quot; + name;
+    }
+}
+
+</code></pre>
+</li>
+</ul>
+<h2 id="其他收获">其他收获</h2>
+<p>传参数的两种形式：</p>
+<ol>
+<li>作为请求参数：方法的参数前使用<code>@RequestParam</code>注解或者不使用任何注解。二者区别在于：如果不写，相当于<code>@RequestParam(required = false)</code>。浏览器访问路径为<code>?key=xxx</code>。</li>
+<li>作为路径参数：请求路径使用<code>{key}</code>构造路径，并且方法的参数前使用<code>@PathVariable</code>注解。浏览器访问路径为<code>/key</code>。</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[从hexo迁移到Gridea]]></title>
         <id>https://yeyouluo.github.io/post/hexo-to-gridea/</id>
@@ -33,6 +100,9 @@
 </blockquote>
 <p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
 <p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<blockquote>
+<p>上面这一项真的很给力，直接省略了图床。</p>
+</blockquote>
 <p>🏷️  你可以对文章进行标签分组</p>
 <p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
 <p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>

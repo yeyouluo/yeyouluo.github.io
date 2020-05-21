@@ -2,26 +2,20 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>从hexo迁移到Gridea | Ye Youluo&#39;s Blog</title>
+<title>第一个SpringBoot程序 | Ye Youluo&#39;s Blog</title>
 <link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1590070858248">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="从hexo迁移到Gridea | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="第一个SpringBoot程序 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="自从发现了Gridea这个静态博客写作神奇，直接抛弃了hexo。
-为什么呢？
-因为使用超级简单！
-
-Github
-Gridea 主页
-示例网站
-特性👇
-
-这几个特性来自Girdea官网，仔细阅读了一下，真的就是吸引我的地方。原封不动传话如..." />
-    <meta name="keywords" content="Gridea" />
+    <meta name="description" content="使用SpringBoot   initializer创建项目
+spring官方：https://start.springboot.io/
+阿里云：https://start.aliyun.com/
+Idea内置的initializer是sp..." />
+    <meta name="keywords" content="Java,SpringBoot" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -83,64 +77,99 @@ Gridea 主页
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              从hexo迁移到Gridea
+              第一个SpringBoot程序
             </h2>
             <div class="post-info">
               <span>
-                2018-12-12
+                2020-05-21
               </span>
               <span>
                 2 min read
               </span>
               
-                <a href="https://yeyouluo.github.io/tag/4T8093JHC/" class="post-tag">
-                  # Gridea
+                <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
+                  # Java
+                </a>
+              
+                <a href="https://yeyouluo.github.io/tag/YWxECFHPi/" class="post-tag">
+                  # SpringBoot
                 </a>
               
             </div>
             
-              <img class="post-feature-image" src="https://yeyouluo.github.io/post-images/hexo-to-gridea.png" alt="">
+              <img class="post-feature-image" src="https://yeyouluo.github.io/post-images/springboot-01-hello-world.svg" alt="">
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>自从发现了Gridea这个静态博客写作神奇，直接抛弃了hexo。<br>
-为什么呢？<br>
-因为使用超级简单！</p>
+                <h2 id="使用springboot-initializer创建项目">使用SpringBoot   initializer创建项目</h2>
+<p>spring官方：https://start.springboot.io/<br>
+阿里云：https://start.aliyun.com/<br>
+Idea内置的initializer是spring官方的。</p>
 <!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
+<h2 id="springboot官方文档">SpringBoot官方文档</h2>
+<p>https://spring.io/projects/spring-boot</p>
+<h2 id="步骤">步骤</h2>
+<h3 id="生成项目">生成项目</h3>
+<p><img src="https://yeyouluo.github.io/post-images/1590069974434.png" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1590069986825.png" alt="" loading="lazy"></p>
+<h3 id="编写controller">编写Controller</h3>
+<p>要点：</p>
+<ul>
+<li>在入口类<code>HelloSpringbootApplication</code>平级目录建立Controller目录</li>
+<li>Controller类使用<code>@RestController</code>或<code>@Controller</code>注解</li>
+</ul>
 <blockquote>
-<p>这几个特性来自Girdea官网，仔细阅读了一下，真的就是吸引我的地方。原封不动传话如下：</p>
+<p>查看源码，<code>@RestController</code>比<code>@Controller</code>多一个<code>@ResponseBody</code>注解，因此只能返回JSON值。如果要返回页面，应使用<code>@Controller</code>注解Controller类。</p>
 </blockquote>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<blockquote>
-<p>上面这一项真的很给力，直接省略了图床。</p>
-</blockquote>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<h2 id="如何添加评论">如何添加评论</h2>
-<p>我添加的是Gitalk评论。参考了<a href="https://www.xcnte.com/archives/731/">https://www.xcnte.com/archives/731/</a>。</p>
-<h2 id="如何多端同步">如何多端同步</h2>
-<p>将Gridea的整个数据目录使用坚果云同步。</p>
-<figure data-type="image" tabindex="1"><img src="https://yeyouluo.github.io/post-images/1590067699691.png" alt="" loading="lazy"></figure>
+<ul>
+<li>
+<p>方法上使用<code>@RequestMapping</code>或<code>@GetMapping</code>注解</p>
+<p>示例：</p>
+<pre><code class="language-java">package com.yeyouluo.hellospringboot.controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+@RestController
+public class HelloController {
+//    @GetMapping(value=&quot;/hello&quot;)
+//    public String sayHello(String name){
+//        return &quot;hello,&quot; + name;
+//    }
+//    @GetMapping(value=&quot;/hello&quot;)
+//    public String sayHello(@RequestParam(value = &quot;name&quot;, required = false) String name){
+//        return &quot;hello,&quot; + name;
+//    }
+    @GetMapping(value=&quot;/hello/{name}&quot;)
+    public String sayHello(@PathVariable String name){
+    return &quot;hello,&quot; + name;
+    }
+}
+
+</code></pre>
+</li>
+</ul>
+<h2 id="其他收获">其他收获</h2>
+<p>传参数的两种形式：</p>
+<ol>
+<li>作为请求参数：方法的参数前使用<code>@RequestParam</code>注解或者不使用任何注解。二者区别在于：如果不写，相当于<code>@RequestParam(required = false)</code>。浏览器访问路径为<code>?key=xxx</code>。</li>
+<li>作为路径参数：请求路径使用<code>{key}</code>构造路径，并且方法的参数前使用<code>@PathVariable</code>注解。浏览器访问路径为<code>/key</code>。</li>
+</ol>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E7%89%B9%E6%80%A7">特性👇</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA">如何添加评论</a></li>
-<li><a href="#%E5%A6%82%E4%BD%95%E5%A4%9A%E7%AB%AF%E5%90%8C%E6%AD%A5">如何多端同步</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8springboot-initializer%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE">使用SpringBoot   initializer创建项目</a></li>
+<li><a href="#springboot%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3">SpringBoot官方文档</a></li>
+<li><a href="#%E6%AD%A5%E9%AA%A4">步骤</a>
+<ul>
+<li><a href="#%E7%94%9F%E6%88%90%E9%A1%B9%E7%9B%AE">生成项目</a></li>
+<li><a href="#%E7%BC%96%E5%86%99controller">编写Controller</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B6%E4%BB%96%E6%94%B6%E8%8E%B7">其他收获</a></li>
 </ul>
 </li>
 </ul>
@@ -150,6 +179,15 @@ Gridea 主页
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yeyouluo.github.io/post/hexo-to-gridea/">
+              <h3 class="post-title">
+                从hexo迁移到Gridea
+              </h3>
+            </a>
+          </div>
         
 
         
