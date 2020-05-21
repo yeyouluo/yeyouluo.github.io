@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-05-21T14:21:21.577Z</updated>
+    <updated>2020-05-21T14:32:49.029Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,28 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[SpringBoot访问静态文件]]></title>
+        <id>https://yeyouluo.github.io/post/springboot-fang-wen-jing-tai-wen-jian/</id>
+        <link href="https://yeyouluo.github.io/post/springboot-fang-wen-jing-tai-wen-jian/">
+        </link>
+        <updated>2020-05-21T14:22:27.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="理论知识">理论知识</h2>
+<p>SpringBoot默认扫描的静态目录为<code>static</code>，因此将静态文件放到<code>static</code>目录下就可以了。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="理论知识">理论知识</h2>
+<p>SpringBoot默认扫描的静态目录为<code>static</code>，因此将静态文件放到<code>static</code>目录下就可以了。</p>
+<!-- more -->
+<h2 id="操作">操作</h2>
+<ol>
+<li>将静态文件放到<code>static</code>目录<br>
+<img src="https://yeyouluo.github.io/post-images/1590071471333.png" alt="" loading="lazy"></li>
+<li>访问，效果符合预期<br>
+<img src="https://yeyouluo.github.io/post-images/1590071481534.png" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1590071490901.png" alt="" loading="lazy"></li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[第一个SpringBoot程序]]></title>
         <id>https://yeyouluo.github.io/post/springboot-01-hello-world/</id>
