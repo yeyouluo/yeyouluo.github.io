@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-05-21T15:33:18.011Z</updated>
+    <updated>2020-05-22T17:34:49.096Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,100 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[SpringBoot集成Thymeleaf]]></title>
+        <id>https://yeyouluo.github.io/post/springboot-ji-cheng-thymeleaf/</id>
+        <link href="https://yeyouluo.github.io/post/springboot-ji-cheng-thymeleaf/">
+        </link>
+        <updated>2020-05-22T16:21:25.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="jsp的缺点">JSP的缺点</h2>
+<p>JSP会被编译成为Servlet，重量级。<br>
+JSP的缺点就是模板的优点。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="jsp的缺点">JSP的缺点</h2>
+<p>JSP会被编译成为Servlet，重量级。<br>
+JSP的缺点就是模板的优点。</p>
+<!-- more -->
+<h2 id="除thymeleaf还有哪些模板">除Thymeleaf，还有哪些模板</h2>
+<ul>
+<li>Freemarker</li>
+<li>Groovy</li>
+</ul>
+<h2 id="理论">理论</h2>
+<p>SpringBoot模板默认配置的目录是<code>templates</code>。</p>
+<h2 id="操作">操作</h2>
+<ol>
+<li>
+<p>引入Thymeleaf依赖（pom.xml）</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+<li>
+<p>添加配置（可省略，则使用默认配置）</p>
+<pre><code class="language-properties">spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML5
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.servlet.content-type=text/html
+</code></pre>
+</li>
+<li>
+<p>代码开发和页面效果测试</p>
+<p>controller层：添加一个<code>PageController</code>类</p>
+<pre><code class="language-java">package com.yeyouluo.hellospringboot.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * @Auther: yeyouluo
+ * @Date: 2020/5/23
+ */
+@Controller
+public class PageController {
+
+    @RequestMapping(&quot;/index&quot;)
+    public String index(Model model) {
+        model.addAttribute(&quot;name&quot;, &quot;yeyouluo&quot;);
+        return &quot;index&quot;;
+    }
+}
+</code></pre>
+<p>在<code>resources/templates</code>目录下新建一个HTML5页面<code>index.html</code>，内容如下：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;测试页面&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;hello,Thymeleaf&lt;/h1&gt;
+    &lt;p&gt;by &lt;span th:text=&quot;${name}&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+<li>
+<p>启动查看效果<br>
+<img src="https://yeyouluo.github.io/post-images/1590166450367.png" alt="" loading="lazy"></p>
+</li>
+</ol>
+<h2 id="其他收获">其他收获</h2>
+<ul>
+<li>可以使用<code>Model</code>传递给页面参数。页面使用<code>${xxx}</code>获取（<code>Thymeleaf</code>语法）。</li>
+<li><code>Thymeleaf</code>基础知识（整理自<a href="https://www.jianshu.com/p/908b48b10702">https://www.jianshu.com/p/908b48b10702</a>）</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://yeyouluo.github.io/post-images/1590168591149.png" alt="" loading="lazy"></figure>
+<h2 id="thymeleaf参考资料">Thymeleaf参考资料</h2>
+<ul>
+<li><a href="https://www.thymeleaf.org/">Thymeleaf官方文档</a></li>
+<li><a href="https://www.jianshu.com/p/908b48b10702">SpringBoot Thymeleaf使用教程（实用版）</a></li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SpringBoot捕获全局异常]]></title>
         <id>https://yeyouluo.github.io/post/springboot-bu-huo-quan-ju-yi-chang/</id>

@@ -2,23 +2,28 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SpringBoot捕获全局异常 | Ye Youluo&#39;s Blog</title>
+<title>SpringBoot集成Thymeleaf | Ye Youluo&#39;s Blog</title>
 <link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1590168867679">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="SpringBoot捕获全局异常 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="SpringBoot集成Thymeleaf | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="理论
+    <meta name="description" content="JSP的缺点
+JSP会被编译成为Servlet，重量级。
+JSP的缺点就是模板的优点。
 
+除Thymeleaf，还有哪些模板
 
-从 spring 3.2 开始，新增了 @ControllerAdvice 注解，可以用于定义 @ExceptionHandler，并应用到配置了 @RequestMapping 的控制器中。
+Freemarker
+Groovy
 
+理论
+SpringBoot模板默认配置的目录是templates。
 操作
-
-定义全局异常捕捉Contr..." />
+..." />
     <meta name="keywords" content="Java,SpringBoot" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -81,14 +86,14 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              SpringBoot捕获全局异常
+              SpringBoot集成Thymeleaf
             </h2>
             <div class="post-info">
               <span>
-                2020-05-21
+                2020-05-23
               </span>
               <span>
-                1 min read
+                2 min read
               </span>
               
                 <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
@@ -103,52 +108,87 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="理论">理论</h2>
-<ul>
-<li>
-<p>从 spring 3.2 开始，新增了 <code>@ControllerAdvice</code> 注解，可以用于定义 <code>@ExceptionHandler</code>，并应用到配置了 <code>@RequestMapping</code> 的控制器中。</p>
+                <h2 id="jsp的缺点">JSP的缺点</h2>
+<p>JSP会被编译成为Servlet，重量级。<br>
+JSP的缺点就是模板的优点。</p>
 <!-- more -->
+<h2 id="除thymeleaf还有哪些模板">除Thymeleaf，还有哪些模板</h2>
+<ul>
+<li>Freemarker</li>
+<li>Groovy</li>
+</ul>
+<h2 id="理论">理论</h2>
+<p>SpringBoot模板默认配置的目录是<code>templates</code>。</p>
 <h2 id="操作">操作</h2>
 <ol>
-<li>定义全局异常捕捉Controller</li>
-</ol>
-<pre><code class="language-java">package com.yeyouluo.hellospringboot.exception;
+<li>
+<p>引入Thymeleaf依赖（pom.xml）</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+<li>
+<p>添加配置（可省略，则使用默认配置）</p>
+<pre><code class="language-properties">spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML5
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.servlet.content-type=text/html
+</code></pre>
+</li>
+<li>
+<p>代码开发和页面效果测试</p>
+<p>controller层：添加一个<code>PageController</code>类</p>
+<pre><code class="language-java">package com.yeyouluo.hellospringboot.controller;
 
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@ControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(value = RuntimeException.class)
-    @ResponseBody
-    public String handle() {
-        return &quot;捕获到全局RuntimeException&quot;;
+/**
+ * @Auther: yeyouluo
+ * @Date: 2020/5/23
+ */
+@Controller
+public class PageController {
+
+    @RequestMapping(&quot;/index&quot;)
+    public String index(Model model) {
+        model.addAttribute(&quot;name&quot;, &quot;yeyouluo&quot;);
+        return &quot;index&quot;;
     }
 }
 </code></pre>
-</li>
-</ul>
-<ol start="2">
-<li>抛出异常<pre><code class="language-java">@GetMapping(&quot;/exception&quot;)
- public String testException(){
-     System.out.println(&quot;开始&quot;);
-
-     System.out.println(2/0);
-
-     System.out.println(&quot;结束&quot;);
-     return &quot;SpringBoot OK&quot;;
- }
+<p>在<code>resources/templates</code>目录下新建一个HTML5页面<code>index.html</code>，内容如下：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;测试页面&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;hello,Thymeleaf&lt;/h1&gt;
+    &lt;p&gt;by &lt;span th:text=&quot;${name}&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 </code></pre>
 </li>
-<li>结果验证<br>
-<img src="https://yeyouluo.github.io/post-images/1590075093881.png" alt="" loading="lazy"></li>
+<li>
+<p>启动查看效果<br>
+<img src="https://yeyouluo.github.io/post-images/1590166450367.png" alt="" loading="lazy"></p>
+</li>
 </ol>
-<h2 id="局限">局限</h2>
-<p>使用 <code>@ControllerAdvice</code>处理异常也有一定的 局限性。只有进入 Controller 层的错误，才会由 <code>@ControllerAdvice</code> 处理。拦截器 抛出的错误，以及 访问错误地址 的情况 <code>@ControllerAdvice</code> 处理不了，由 Spring Boot 默认的 异常处理机制 处理。</p>
-<h2 id="参考">参考</h2>
+<h2 id="其他收获">其他收获</h2>
 <ul>
-<li><a href="https://blog.csdn.net/baidu_22254181/java/article/details/80789076">实战Spring Boot 2.0系列(二) - 全局异常处理和测试</a></li>
+<li>可以使用<code>Model</code>传递给页面参数。页面使用<code>${xxx}</code>获取（<code>Thymeleaf</code>语法）。</li>
+<li><code>Thymeleaf</code>基础知识（整理自<a href="https://www.jianshu.com/p/908b48b10702">https://www.jianshu.com/p/908b48b10702</a>）</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://yeyouluo.github.io/post-images/1590168591149.png" alt="" loading="lazy"></figure>
+<h2 id="thymeleaf参考资料">Thymeleaf参考资料</h2>
+<ul>
+<li><a href="https://www.thymeleaf.org/">Thymeleaf官方文档</a></li>
+<li><a href="https://www.jianshu.com/p/908b48b10702">SpringBoot Thymeleaf使用教程（实用版）</a></li>
 </ul>
 
               </div>
@@ -156,10 +196,12 @@ public class GlobalExceptionHandler {
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
+<li><a href="#jsp%E7%9A%84%E7%BC%BA%E7%82%B9">JSP的缺点</a></li>
+<li><a href="#%E9%99%A4thymeleaf%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A8%A1%E6%9D%BF">除Thymeleaf，还有哪些模板</a></li>
 <li><a href="#%E7%90%86%E8%AE%BA">理论</a></li>
 <li><a href="#%E6%93%8D%E4%BD%9C">操作</a></li>
-<li><a href="#%E5%B1%80%E9%99%90">局限</a></li>
-<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+<li><a href="#%E5%85%B6%E4%BB%96%E6%94%B6%E8%8E%B7">其他收获</a></li>
+<li><a href="#thymeleaf%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">Thymeleaf参考资料</a></li>
 </ul>
 </li>
 </ul>
@@ -172,9 +214,9 @@ public class GlobalExceptionHandler {
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://yeyouluo.github.io/post/springboot-fang-wen-jing-tai-wen-jian/">
+            <a href="https://yeyouluo.github.io/post/springboot-bu-huo-quan-ju-yi-chang/">
               <h3 class="post-title">
-                SpringBoot访问静态文件
+                SpringBoot捕获全局异常
               </h3>
             </a>
           </div>
