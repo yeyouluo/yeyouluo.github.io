@@ -2,28 +2,22 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SpringBoot访问静态文件 | Ye Youluo&#39;s Blog</title>
+<title>SpringBoot集成MybatisPlus | Ye Youluo&#39;s Blog</title>
 <link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1590247604482">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="SpringBoot访问静态文件 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="SpringBoot集成MybatisPlus | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="理论知识
-SpringBoot默认扫描的静态目录为static，因此将静态文件放到static目录下就可以了。
+    <meta name="description" content="MyBatisPlus
+MyBatis-Plus（简称 MP）是一个 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。
+MyBatisPlus官网
 
 操作
-
-将静态文件放到static目录
-
-访问，效果符合预期
-
-
-
-..." />
-    <meta name="keywords" content="Java,SpringBoot" />
+参考MP快速开始。文档写的很清晰..." />
+    <meta name="keywords" content="MyBatis,Java,SpringBoot" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -85,15 +79,19 @@ SpringBoot默认扫描的静态目录为static，因此将静态文件放到stat
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              SpringBoot访问静态文件
+              SpringBoot集成MybatisPlus
             </h2>
             <div class="post-info">
               <span>
-                2020-05-21
+                2020-05-23
               </span>
               <span>
                 1 min read
               </span>
+              
+                <a href="https://yeyouluo.github.io/tag/KWt8RSdSS/" class="post-tag">
+                  # MyBatis
+                </a>
               
                 <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
                   # Java
@@ -105,27 +103,32 @@ SpringBoot默认扫描的静态目录为static，因此将静态文件放到stat
               
             </div>
             
+              <img class="post-feature-image" src="https://yeyouluo.github.io/post-images/springboot-ji-cheng-mybatisplus.png" alt="">
+            
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="理论知识">理论知识</h2>
-<p>SpringBoot默认扫描的静态目录为<code>static</code>，因此将静态文件放到<code>static</code>目录下就可以了。</p>
+                <h2 id="mybatisplus">MyBatisPlus</h2>
+<p><a href="https://github.com/baomidou/mybatis-plus">MyBatis-Plus</a>（简称 MP）是一个 <a href="http://www.mybatis.org/mybatis-3/">MyBatis</a> 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。<br>
+<a href="https://mybatis.plus/">MyBatisPlus官网</a></p>
 <!-- more -->
 <h2 id="操作">操作</h2>
-<ol>
-<li>将静态文件放到<code>static</code>目录<br>
-<img src="https://yeyouluo.github.io/post-images/1590071471333.png" alt="" loading="lazy"></li>
-<li>访问，效果符合预期<br>
-<img src="https://yeyouluo.github.io/post-images/1590071481534.png" alt="" loading="lazy"><br>
-<img src="https://yeyouluo.github.io/post-images/1590071490901.png" alt="" loading="lazy"></li>
-</ol>
+<p>参考<a href="https://mybatis.plus/guide/quick-start.html">MP快速开始</a>。文档写的很清晰，按图索骥即可，此处不再赘述。</p>
+<h2 id="注意点">注意点</h2>
+<ul>
+<li>要么在入口类添加<code>@MapperScan(&quot;com.yeyouluo.mpspringboot.mapper&quot;)</code>注解，要么在<code>Mapper</code>类上添加<code>@Mapper</code>注解。否则启动报错。</li>
+<li>如果要使用分页查询，还需要额外的配置，否则启动报错。</li>
+<li>更多MyBatisPlus示例参考<a href="https://github.com/baomidou/mybatis-plus-samples">Github<br>
+mybatis-plus-samples</a>。</li>
+</ul>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86">理论知识</a></li>
+<li><a href="#mybatisplus">MyBatisPlus</a></li>
 <li><a href="#%E6%93%8D%E4%BD%9C">操作</a></li>
+<li><a href="#%E6%B3%A8%E6%84%8F%E7%82%B9">注意点</a></li>
 </ul>
 </li>
 </ul>
@@ -138,9 +141,9 @@ SpringBoot默认扫描的静态目录为static，因此将静态文件放到stat
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://yeyouluo.github.io/post/springboot-01-hello-world/">
+            <a href="https://yeyouluo.github.io/post/springboot-ji-cheng-mybatis/">
               <h3 class="post-title">
-                第一个SpringBoot程序
+                SpringBoot集成MyBatis
               </h3>
             </a>
           </div>
