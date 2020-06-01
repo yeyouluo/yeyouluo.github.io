@@ -2,24 +2,21 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SpringBoot捕获全局异常 | Ye Youluo&#39;s Blog</title>
+<title>总结回顾面向对象、设计原则、编程规范、重构技巧等知识点 | Ye Youluo&#39;s Blog</title>
 <link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1591025736229">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="SpringBoot捕获全局异常 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="总结回顾面向对象、设计原则、编程规范、重构技巧等知识点 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="理论
+    <meta name="description" content="
 
 
-从 spring 3.2 开始，新增了 @ControllerAdvice 注解，可以用于定义 @ExceptionHandler，并应用到配置了 @RequestMapping 的控制器中。
 
-操作
-
-定义全局异常捕捉Contr..." />
-    <meta name="keywords" content="Java,SpringBoot" />
+..." />
+    <meta name="keywords" content="设计模式" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -81,103 +78,37 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              SpringBoot捕获全局异常
+              总结回顾面向对象、设计原则、编程规范、重构技巧等知识点
             </h2>
             <div class="post-info">
               <span>
-                2020-05-21
+                2020-06-01
               </span>
               <span>
-                1 min read
+                0 min read
               </span>
               
-                <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
-                  # Java
-                </a>
-              
-                <a href="https://yeyouluo.github.io/tag/YWxECFHPi/" class="post-tag">
-                  # SpringBoot
+                <a href="https://yeyouluo.github.io/tag/WjTDmvHiE/" class="post-tag">
+                  # 设计模式
                 </a>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="理论">理论</h2>
-<ul>
-<li>
-<p>从 spring 3.2 开始，新增了 <code>@ControllerAdvice</code> 注解，可以用于定义 <code>@ExceptionHandler</code>，并应用到配置了 <code>@RequestMapping</code> 的控制器中。</p>
-<!-- more -->
-<h2 id="操作">操作</h2>
-<ol>
-<li>定义全局异常捕捉Controller</li>
-</ol>
-<pre><code class="language-java">package com.yeyouluo.hellospringboot.exception;
-
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@ControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(value = RuntimeException.class)
-    @ResponseBody
-    public String handle() {
-        return &quot;捕获到全局RuntimeException&quot;;
-    }
-}
-</code></pre>
-</li>
-</ul>
-<ol start="2">
-<li>抛出异常<pre><code class="language-java">@GetMapping(&quot;/exception&quot;)
- public String testException(){
-     System.out.println(&quot;开始&quot;);
-
-     System.out.println(2/0);
-
-     System.out.println(&quot;结束&quot;);
-     return &quot;SpringBoot OK&quot;;
- }
-</code></pre>
-</li>
-<li>结果验证<br>
-<img src="https://yeyouluo.github.io/post-images/1590075093881.png" alt="" loading="lazy"></li>
-</ol>
-<h2 id="局限">局限</h2>
-<p>使用 <code>@ControllerAdvice</code>处理异常也有一定的 局限性。只有进入 Controller 层的错误，才会由 <code>@ControllerAdvice</code> 处理。拦截器 抛出的错误，以及 访问错误地址 的情况 <code>@ControllerAdvice</code> 处理不了，由 Spring Boot 默认的 异常处理机制 处理。</p>
-<h2 id="参考">参考</h2>
-<ul>
-<li><a href="https://blog.csdn.net/baidu_22254181/java/article/details/80789076">实战Spring Boot 2.0系列(二) - 全局异常处理和测试</a></li>
-</ul>
+                <p><img src="https://yeyouluo.github.io/post-images/1591023297652.jpg" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1591023303788.jpg" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1591023308286.jpg" alt="" loading="lazy"><br>
+<img src="https://yeyouluo.github.io/post-images/1591023312396.jpg" alt="" loading="lazy"></p>
 
               </div>
               <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E7%90%86%E8%AE%BA">理论</a></li>
-<li><a href="#%E6%93%8D%E4%BD%9C">操作</a></li>
-<li><a href="#%E5%B1%80%E9%99%90">局限</a></li>
-<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
-</ul>
-</li>
-</ul>
-
+                
               </div>
             </div>
           </article>
         </div>
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://yeyouluo.github.io/post/springboot-fang-wen-jing-tai-wen-jian/">
-              <h3 class="post-title">
-                SpringBoot访问静态文件
-              </h3>
-            </a>
-          </div>
         
 
         

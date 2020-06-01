@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-05-23T15:28:11.670Z</updated>
+    <updated>2020-06-01T15:36:20.233Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,292 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[数据结构与算法入门]]></title>
+        <id>https://yeyouluo.github.io/post/shu-ju-jie-gou-yu-suan-fa-ru-men/</id>
+        <link href="https://yeyouluo.github.io/post/shu-ju-jie-gou-yu-suan-fa-ru-men/">
+        </link>
+        <updated>2020-05-25T23:44:52.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="为什么要学习数据结构与算法">为什么要学习数据结构与算法</h2>
+<ul>
+<li>能够写出质量更高的代码</li>
+<li>掌握数据结构与算法，有助于理解框架源码及框架的设计思想</li>
+<li>应付大厂面试</li>
+</ul>
+<h2 id="数据机构与算法的关系">数据机构与算法的关系</h2>
+<p>数据结构是为算法服务的，算法要作用在特定的数据结构之上。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="为什么要学习数据结构与算法">为什么要学习数据结构与算法</h2>
+<ul>
+<li>能够写出质量更高的代码</li>
+<li>掌握数据结构与算法，有助于理解框架源码及框架的设计思想</li>
+<li>应付大厂面试</li>
+</ul>
+<h2 id="数据机构与算法的关系">数据机构与算法的关系</h2>
+<p>数据结构是为算法服务的，算法要作用在特定的数据结构之上。</p>
+<!-- more -->
+<h2 id="数据结构与算法学习重点">数据结构与算法学习重点</h2>
+<ul>
+<li>复杂度分析</li>
+<li>数据结构与算法全景图（无需全部掌握）<br>
+<img src="https://yeyouluo.github.io/post-images/1590451269433.jpg" alt="" loading="lazy"></li>
+<li>常用点&amp;重点
+<ul>
+<li>10 个数据结构：数组、链表、栈、队列、散列表、二叉树、堆、跳表、图、Trie 树</li>
+<li>10 个算法：递归、排序、二分查找、搜索、哈希算法、贪心算法、分治算法、回溯算法、动态规划、字符串匹配算法</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据结构与算法学习技巧">数据结构与算法学习技巧</h2>
+<ul>
+<li>
+<p>边学边练，适度刷题<br>
+建议每周花 1～2 个小时的时间，自己用代码全部实现一遍。</p>
+<blockquote>
+<p>王争观点：可以“适度”刷题，但一定不要浪费太多时间在刷题上。我们学习的目的还是掌握，然后应用。除非你要面试 Google、Facebook 这样的公司，它们的算法题目非常非常难，必须大量刷题，才能在短期内提升应试正确率。如果是应对国内公司的技术面试，即便是 BAT 这样的公司，你只要彻底掌握这个专栏的内容，就足以应对。</p>
+</blockquote>
+</li>
+<li>
+<p>多问、多思考、多互动</p>
+</li>
+<li>
+<p>打怪升级学习法</p>
+<ul>
+<li>设立一个切实可行的目标</li>
+<li>要有输出（这也是我写系列学习笔记的目的所在）</li>
+</ul>
+</li>
+<li>
+<p>知识需要沉淀，不要想试图一下子掌握所有</p>
+<blockquote>
+<p>在学习的过程中，一定会碰到“拦路虎”。如果哪个知识点没有怎么学懂，不要着急，这是正常的。因为，想听一遍、看一遍就把所有知识掌握，这肯定是不可能的。学习知识的过程是反复迭代、不断沉淀的过程。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="复杂度分析">复杂度分析</h2>
+<h3 id="复杂度分析课程地位">复杂度分析课程地位</h3>
+<p>复杂度分析是整个算法学习的精髓，只要掌握了它，数据结构和算法的内容基本上就掌握了一半。</p>
+<h3 id="为何需要复杂度分析">为何需要复杂度分析</h3>
+<p><strong>事后统计法</strong>有很大的局限性：</p>
+<ul>
+<li>测试结果非常依赖测试环境</li>
+<li>测试结果受数据规模的影响很大</li>
+</ul>
+<p>所以，我们需要一个不用具体的测试数据来测试，就可以粗略地估计算法的执行效率的方法，即时间、空间复杂度分析方法。</p>
+<h3 id="时间复杂度分析">时间复杂度分析</h3>
+<h4 id="概念">概念</h4>
+<p><strong>大 O 时间复杂度</strong>实际上并不具体表示代码真正的执行时间，而是表示代码执行时间随数据规模增长的<u>变化趋势</u>，所以，也叫作渐进时间复杂度（asymptotic time complexity），简称时间复杂度。</p>
+<h4 id="时间复杂度实用方法">时间复杂度实用方法</h4>
+<ol>
+<li>只关注循环执行次数最多的一段代码</li>
+<li>加法法则：总复杂度等于量级最大的那段代码的复杂度</li>
+<li>乘法法则：嵌套代码的复杂度等于嵌套内外代码复杂度的乘积</li>
+</ol>
+<h4 id="常见的时间复杂度">常见的时间复杂度</h4>
+<p><img src="https://yeyouluo.github.io/post-images/1590467016694.jpg" alt="" loading="lazy"><br>
+对于上图罗列的复杂度量级，我们可以粗略地分为两类，多项式量级和非多项式量级。其中，非多项式量级只有两个：O(2n) 和 O(n!)。<br>
+<img src="https://yeyouluo.github.io/post-images/1590467046059.jpg" alt="" loading="lazy"><br>
+我们把时间复杂度为非多项式量级的算法问题叫作 <strong>NP（Non-Deterministic Polynomial，非确定多项式）问题</strong>。</p>
+<p>当数据规模 n 越来越大时，非多项式量级算法的执行时间会急剧增加，求解问题的执行时间会无限增长。所以，<strong>非多项式时间复杂度的算法其实是非常低效的算法</strong>。以下是几种常见的多项式时间复杂度：</p>
+<ol>
+<li>O(1)</li>
+</ol>
+<p>一般情况下，只要算法中不存在循环语句、递归语句，即使有成千上万行的代码，其时间复杂度也是Ο(1)。</p>
+<ol start="2">
+<li>O(logn)、O(nlogn)</li>
+</ol>
+<blockquote>
+<p>对数阶时间复杂度非常常见，同时也是最难分析的一种时间复杂度。</p>
+</blockquote>
+<p>比如，归并排序、快速排序的时间复杂度都是 O(nlogn)。</p>
+<ol start="3">
+<li>O(m+n)、O(m*n)</li>
+</ol>
+<p>有两个数据规模，我们无法事先评估 m 和 n 谁的量级大，所以我们在表示复杂度的时候，就不能简单地利用加法法则，省略掉其中一个。</p>
+<h4 id="最好-最坏-平均-均摊时间复杂度">最好、最坏、平均、均摊时间复杂度</h4>
+<p>好情况时间复杂度就是，在最理想的情况下，执行这段代码的时间复杂度。<br>
+最坏情况时间复杂度就是，在最糟糕的情况下，执行这段代码的时间复杂度。<br>
+平均时间复杂度：用代码在所有情况下执行的次数的加权平均值表示。平均时间复杂度的全称应该叫加权平均时间复杂度或者期望时间复杂度。</p>
+<blockquote>
+<p>很多时候，我们使用一个复杂度就可以满足需求了。只有同一块代码在不同的情况下，时间复杂度有量级的差距，我们才会使用这三种复杂度表示法来区分。</p>
+</blockquote>
+<p>均摊时间复杂度：在代码执行的所有复杂度情况中绝大部分是低级别的复杂度，个别情况是高级别复杂度且发生具有时序关系时，可以将个别高级别复杂度均摊到低级别复杂度上。基本上均摊结果就等于低级别复杂度。</p>
+<h3 id="空间复杂度分析">空间复杂度分析</h3>
+<h4 id="概念-2">概念</h4>
+<p>空间复杂度全称就是渐进空间复杂度（asymptotic space complexity），表示算法的存储空间与数据规模之间的增长关系。</p>
+<h4 id="常见的时间复杂度-2">常见的时间复杂度</h4>
+<p>常见的空间复杂度就是 O(1)、O(n)、O(n2) 。</p>
+<blockquote>
+<ol>
+<li>O(logn)、O(nlogn) 这样的对数阶复杂度平时都用不到 。</li>
+<li>空间复杂度分析比时间复杂度分析要简单很多。</li>
+</ol>
+</blockquote>
+<h2 id="工具">工具</h2>
+<ul>
+<li>算法可视化网站：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">https://www.cs.usfca.edu/~galles/visualization/Algorithms.html</a></li>
+</ul>
+<h2 id="书籍推荐">书籍推荐</h2>
+<p>by王争<br>
+<img src="https://yeyouluo.github.io/post-images/1590510118154.jpg" alt="" loading="lazy"></p>
+<h2 id="重难点一览表">重难点一览表</h2>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>名称</th>
+<th>难易程序</th>
+<th>重点</th>
+<th>掌握程度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>复杂度分析</td>
+<td>Medium</td>
+<td>10</td>
+<td>在不看我的分析的情况下，能自行分析专栏中大部分数据结构和算法的时间、空间复杂度</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数组、栈、队列</td>
+<td>Easy</td>
+<td>8</td>
+<td>能自己实现动态数组、栈、队列</td>
+</tr>
+<tr>
+<td>3</td>
+<td>链表</td>
+<td>Medium</td>
+<td>9</td>
+<td>能轻松写出经典链表题目代码</td>
+</tr>
+<tr>
+<td>4</td>
+<td>递归</td>
+<td>Hard</td>
+<td>10</td>
+<td>轻松写出二叉树遍历、八皇后、背包问题、DFS 的递归代码</td>
+</tr>
+<tr>
+<td>5</td>
+<td>排序、二分查找</td>
+<td>Easy</td>
+<td>7</td>
+<td>能自己把各种排序算法、二分查找及其变体代码写一遍就可以</td>
+</tr>
+<tr>
+<td>6</td>
+<td>跳表</td>
+<td>Medium</td>
+<td>6</td>
+<td>初学者可以先跳过。如果感兴趣，看懂专栏内容即可，不需要掌握代码实现</td>
+</tr>
+<tr>
+<td>7</td>
+<td>散列表</td>
+<td>Medium</td>
+<td>8</td>
+<td>对于初学者来说，自己能代码实现一个拉链法解决冲突的散列表即可</td>
+</tr>
+<tr>
+<td>8</td>
+<td>哈希算法</td>
+<td>Easy</td>
+<td>3</td>
+<td>可以暂时不看</td>
+</tr>
+<tr>
+<td>9</td>
+<td>二叉树</td>
+<td>Medium</td>
+<td>9</td>
+<td>能代码实现二叉树的三种遍历算法、按层遍历、求高度等经典二叉树题目</td>
+</tr>
+<tr>
+<td>10</td>
+<td>红黑树</td>
+<td>Hard</td>
+<td>3</td>
+<td>初学者不用把时间浪费在上面</td>
+</tr>
+<tr>
+<td>11</td>
+<td>B+ 树</td>
+<td>Medium</td>
+<td>5</td>
+<td>可看可不看</td>
+</tr>
+<tr>
+<td>12</td>
+<td>堆与堆排序</td>
+<td>Medium</td>
+<td>8</td>
+<td>能代码实现堆、堆排序，并且掌握堆的三种应用（优先级队列、Top k、中位数）</td>
+</tr>
+<tr>
+<td>13</td>
+<td>图的表示</td>
+<td>Easy</td>
+<td>8</td>
+<td>理解图的三种表示方法（邻接矩阵、邻接表、逆邻接表），能自己代码实现</td>
+</tr>
+<tr>
+<td>14</td>
+<td>深度广度优先搜索</td>
+<td>Hard</td>
+<td>8</td>
+<td>能代码实现广度优先、深度优先搜索算法。建议放在最后挑战。</td>
+</tr>
+<tr>
+<td>15</td>
+<td>拓扑排序、最短路径、A* 算法</td>
+<td>Hard</td>
+<td>5</td>
+<td>有时间再看，暂时可以不看</td>
+</tr>
+<tr>
+<td>16</td>
+<td>字符串匹配（BF、RK）</td>
+<td>Easy</td>
+<td>7</td>
+<td>能实践 BF 算法，能看懂 RK 算法</td>
+</tr>
+<tr>
+<td>17</td>
+<td>字符串匹配（BM、KMP、AC 自动机）</td>
+<td>Hard</td>
+<td>3</td>
+<td>初学者不用把时间浪费在上面</td>
+</tr>
+<tr>
+<td>18</td>
+<td>字符串匹配（Trie）</td>
+<td>Medium</td>
+<td>7</td>
+<td>能看懂，知道特点、应用场景即可，不要求代码实现</td>
+</tr>
+<tr>
+<td>19</td>
+<td>位图</td>
+<td>Easy</td>
+<td>6</td>
+<td>看懂即可，能自己实现一个位图结构最好</td>
+</tr>
+<tr>
+<td>20</td>
+<td>四种算法思想</td>
+<td>Hard</td>
+<td>10</td>
+<td>以放到最后，但是一定要掌握！做到能实现 Leetcode 上 Medium 难度的题目</td>
+</tr>
+</tbody>
+</table>
+<h2 id="致谢">致谢</h2>
+<p>本系列笔记均来自于极客时间专栏《数据结构与算法之美》，作者王争。感谢极客时间及王争，能提供这么高质量的课程。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SpringBoot集成MybatisPlus]]></title>
         <id>https://yeyouluo.github.io/post/springboot-ji-cheng-mybatisplus/</id>
