@@ -1,0 +1,317 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jenkins屏蔽windows、Linux slave差异 | Ye Youluo&#39;s Blog</title>
+<link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1591453837777">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Jenkins屏蔽windows、Linux slave差异 | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="背景及目标
+由于未能解决前端在linux上的打包问题，临时采用在slave（windows）上编译前端vue代码，再和master（linux）整合。如果使用jenkins pipeline作业，就可以在一个作业里整合全部的操作。
+
+环境说..." />
+    <meta name="keywords" content="Jenkins" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yeyouluo.github.io">
+  <img class="avatar" src="https://yeyouluo.github.io/images/avatar.png?v=1591453837777" alt="">
+  </a>
+  <h1 class="site-title">
+    Ye Youluo&#39;s Blog
+  </h1>
+  <p class="site-description">
+    知识，本该纯粹真实。 不应为乱象而迷失，因避讳而藏掖。
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Jenkins屏蔽windows、Linux slave差异
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-06-06
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://yeyouluo.github.io/tag/fM0X9eCWs/" class="post-tag">
+                  # Jenkins
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://yeyouluo.github.io/post-images/jenkins-ping-bi-windowslinux-slave-chai-yi.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="背景及目标">背景及目标</h2>
+<p>由于未能解决前端在linux上的打包问题，临时采用在slave（windows）上编译前端vue代码，再和master（linux）整合。如果使用jenkins pipeline作业，就可以在一个作业里整合全部的操作。</p>
+<!-- more -->
+<h2 id="环境说明">环境说明</h2>
+<ul>
+<li>Centos7</li>
+<li>Jenkins 2.150.1</li>
+<li>windows 10</li>
+</ul>
+<h2 id="前置工作">前置工作</h2>
+<ul>
+<li>配置windows slave，使用JNLP连接</li>
+</ul>
+<h2 id="pipeline脚本">pipeline脚本</h2>
+<pre><code class="language-groovy">node(&quot;master&quot;){
+    stage(&quot;环境清理&quot;){
+	   sh '''
+	        if [ ! -d &quot;${WORKSPACE}/../${JOB_NAME}_support&quot; ];then 
+    			mkdir -p ${WORKSPACE}/../${JOB_NAME}_support
+    		fi;
+            if [ ! -f &quot;${WORKSPACE}/../${JOB_NAME}_support/dist.tgz&quot; ];then
+				echo &quot;dist.tgz不存在！&quot;
+			else
+				rm -rf ${WORKSPACE}/../${JOB_NAME}_support/dist*
+				echo &quot;删除dist.tgz成功！&quot;
+			fi
+        '''		
+	}
+}
+node(&quot;windows-slave&quot;){
+   stage('拉取代码') { // for display purposes
+      // Get some code from a GitHub repository
+      checkout([$class: 'GitSCM', branches: [[name: &quot;*/master&quot;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'c087b96d-3c22-4701-a51b-68a38b74d1a1', url: 'http://xxx-Front.git']]])
+   }
+   stage('npm打包'){
+       bat '''![](https://yeyouluo.github.io/post-images/1591453418202.png)
+            cd %WORKSPACE%
+            rd /s/q dist
+            npm run build
+        '''
+   }
+    stage('传输部署包'){
+       bat '''
+            cd %WORKSPACE%
+            tar zcvf dist.tgz dist
+			scp dist.tgz hadoop@slave105:/home/hadoop/base/jenkins/data/workspace/%JOB_NAME%_support
+        '''
+   }
+}
+
+node(&quot;master&quot;){
+   stage('拉取代码') { // for display purposes
+      // Get some code from a GitHub repository
+      checkout([$class: 'GitSCM', branches: [[name: &quot;*/6s&quot;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'c087b96d-3c22-4701-a51b-68a38b74d1a1', url: 'xxx-backend.git']]])
+   }
+   stage('整合前端文件') { // for display purposes
+      sh '''
+	    cd ${WORKSPACE}/../${JOB_NAME}_support
+		tar zxvf dist.tgz
+        if [ ! -d &quot;${WORKSPACE}/web/war/src/main/webapp&quot; ];then 
+			mkdir -p ${WORKSPACE}/web/war/src/main/webapp
+		fi;
+		if [ -d &quot;${WORKSPACE}/web/war/src/main/webapp/static&quot; ];then 
+			rm -rf ${WORKSPACE}/web/war/src/main/webapp/static
+		fi;
+		if [ -f &quot;${WORKSPACE}/web/war/src/main/webapp/index.html&quot; ];then 
+			rm -f ${WORKSPACE}/web/war/src/main/webapp/index.html
+		fi;		
+        mv ${WORKSPACE}/../${JOB_NAME}_support/dist/* ${WORKSPACE}/web/war/src/main/webapp
+      '''
+   }
+   stage('编译打包') { // for display purposes
+   // Run the maven build
+      if (isUnix()) {
+         sh '''
+            mvn clean package -DskipTests=true
+         '''
+       } else {
+          bat(&quot;mvn clean package -DskipTests=true&quot;)
+      }
+   }
+}
+node(&quot;linux-slave-tomcat&quot;){
+    stage('停止tomcat') { // for display purposes
+  }
+}
+node(&quot;master&quot;){
+  stage('替换war') { // for display purposes
+  }
+}
+node(&quot;master&quot;){
+  stage('启动tomcat') { // for display purposes
+
+  }
+}
+
+</code></pre>
+<h2 id="思路">思路</h2>
+<ul>
+<li>在windows slave上执行npm打包，将打包文件压缩成tarball（使用Cygwin环境命令），并上传到master jenkins data目录下（job平级目录创建了一个<code>_support</code>目录，tarball放到这个目录下）</li>
+<li>在master主机上打包后端项目，并和前端部署脚本做整合</li>
+<li>重启tomcat脚本去掉了，因为含有部分敏感信息。
+<blockquote>
+<p>由于主机等敏感信息来自于公司内网，因此上述脚本说了阉割处理。</p>
+</blockquote>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%83%8C%E6%99%AF%E5%8F%8A%E7%9B%AE%E6%A0%87">背景及目标</a></li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E">环境说明</a></li>
+<li><a href="#%E5%89%8D%E7%BD%AE%E5%B7%A5%E4%BD%9C">前置工作</a></li>
+<li><a href="#pipeline%E8%84%9A%E6%9C%AC">pipeline脚本</a></li>
+<li><a href="#%E6%80%9D%E8%B7%AF">思路</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yeyouluo.github.io/post/shu-ju-jie-gou-yu-suan-fa-ru-men/">
+              <h3 class="post-title">
+                数据结构与算法入门
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'ec3e5be64eb825b7eff0',
+    clientSecret: '63e8ef982055260c75a766b87c9b7bbb1b62d150',
+    repo: 'yeyouluo.github.io',
+    owner: 'yeyouluo',
+    admin: ['yeyouluo'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yeyouluo.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

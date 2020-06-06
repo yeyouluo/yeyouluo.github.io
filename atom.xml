@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yeyouluo.github.io</id>
     <title>Ye Youluo&apos;s Blog</title>
-    <updated>2020-06-01T15:36:20.233Z</updated>
+    <updated>2020-06-06T14:31:46.079Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yeyouluo.github.io"/>
     <link rel="self" href="https://yeyouluo.github.io/atom.xml"/>
@@ -10,6 +10,124 @@
     <logo>https://yeyouluo.github.io/images/avatar.png</logo>
     <icon>https://yeyouluo.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Ye Youluo&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[Jenkins屏蔽windows、Linux slave差异]]></title>
+        <id>https://yeyouluo.github.io/post/jenkins-ping-bi-windowslinux-slave-chai-yi/</id>
+        <link href="https://yeyouluo.github.io/post/jenkins-ping-bi-windowslinux-slave-chai-yi/">
+        </link>
+        <updated>2020-06-06T14:07:31.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="背景及目标">背景及目标</h2>
+<p>由于未能解决前端在linux上的打包问题，临时采用在slave（windows）上编译前端vue代码，再和master（linux）整合。如果使用jenkins pipeline作业，就可以在一个作业里整合全部的操作。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h2 id="背景及目标">背景及目标</h2>
+<p>由于未能解决前端在linux上的打包问题，临时采用在slave（windows）上编译前端vue代码，再和master（linux）整合。如果使用jenkins pipeline作业，就可以在一个作业里整合全部的操作。</p>
+<!-- more -->
+<h2 id="环境说明">环境说明</h2>
+<ul>
+<li>Centos7</li>
+<li>Jenkins 2.150.1</li>
+<li>windows 10</li>
+</ul>
+<h2 id="前置工作">前置工作</h2>
+<ul>
+<li>配置windows slave，使用JNLP连接</li>
+</ul>
+<h2 id="pipeline脚本">pipeline脚本</h2>
+<pre><code class="language-groovy">node(&quot;master&quot;){
+    stage(&quot;环境清理&quot;){
+	   sh '''
+	        if [ ! -d &quot;${WORKSPACE}/../${JOB_NAME}_support&quot; ];then 
+    			mkdir -p ${WORKSPACE}/../${JOB_NAME}_support
+    		fi;
+            if [ ! -f &quot;${WORKSPACE}/../${JOB_NAME}_support/dist.tgz&quot; ];then
+				echo &quot;dist.tgz不存在！&quot;
+			else
+				rm -rf ${WORKSPACE}/../${JOB_NAME}_support/dist*
+				echo &quot;删除dist.tgz成功！&quot;
+			fi
+        '''		
+	}
+}
+node(&quot;windows-slave&quot;){
+   stage('拉取代码') { // for display purposes
+      // Get some code from a GitHub repository
+      checkout([$class: 'GitSCM', branches: [[name: &quot;*/master&quot;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'c087b96d-3c22-4701-a51b-68a38b74d1a1', url: 'http://xxx-Front.git']]])
+   }
+   stage('npm打包'){
+       bat '''![](https://yeyouluo.github.io/post-images/1591453418202.png)
+            cd %WORKSPACE%
+            rd /s/q dist
+            npm run build
+        '''
+   }
+    stage('传输部署包'){
+       bat '''
+            cd %WORKSPACE%
+            tar zcvf dist.tgz dist
+			scp dist.tgz hadoop@slave105:/home/hadoop/base/jenkins/data/workspace/%JOB_NAME%_support
+        '''
+   }
+}
+
+node(&quot;master&quot;){
+   stage('拉取代码') { // for display purposes
+      // Get some code from a GitHub repository
+      checkout([$class: 'GitSCM', branches: [[name: &quot;*/6s&quot;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'c087b96d-3c22-4701-a51b-68a38b74d1a1', url: 'xxx-backend.git']]])
+   }
+   stage('整合前端文件') { // for display purposes
+      sh '''
+	    cd ${WORKSPACE}/../${JOB_NAME}_support
+		tar zxvf dist.tgz
+        if [ ! -d &quot;${WORKSPACE}/web/war/src/main/webapp&quot; ];then 
+			mkdir -p ${WORKSPACE}/web/war/src/main/webapp
+		fi;
+		if [ -d &quot;${WORKSPACE}/web/war/src/main/webapp/static&quot; ];then 
+			rm -rf ${WORKSPACE}/web/war/src/main/webapp/static
+		fi;
+		if [ -f &quot;${WORKSPACE}/web/war/src/main/webapp/index.html&quot; ];then 
+			rm -f ${WORKSPACE}/web/war/src/main/webapp/index.html
+		fi;		
+        mv ${WORKSPACE}/../${JOB_NAME}_support/dist/* ${WORKSPACE}/web/war/src/main/webapp
+      '''
+   }
+   stage('编译打包') { // for display purposes
+   // Run the maven build
+      if (isUnix()) {
+         sh '''
+            mvn clean package -DskipTests=true
+         '''
+       } else {
+          bat(&quot;mvn clean package -DskipTests=true&quot;)
+      }
+   }
+}
+node(&quot;linux-slave-tomcat&quot;){
+    stage('停止tomcat') { // for display purposes
+  }
+}
+node(&quot;master&quot;){
+  stage('替换war') { // for display purposes
+  }
+}
+node(&quot;master&quot;){
+  stage('启动tomcat') { // for display purposes
+
+  }
+}
+
+</code></pre>
+<h2 id="思路">思路</h2>
+<ul>
+<li>在windows slave上执行npm打包，将打包文件压缩成tarball（使用Cygwin环境命令），并上传到master jenkins data目录下（job平级目录创建了一个<code>_support</code>目录，tarball放到这个目录下）</li>
+<li>在master主机上打包后端项目，并和前端部署脚本做整合</li>
+<li>重启tomcat脚本去掉了，因为含有部分敏感信息。
+<blockquote>
+<p>由于主机等敏感信息来自于公司内网，因此上述脚本说了阉割处理。</p>
+</blockquote>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[数据结构与算法入门]]></title>
         <id>https://yeyouluo.github.io/post/shu-ju-jie-gou-yu-suan-fa-ru-men/</id>
