@@ -1,0 +1,458 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Java并发编程笔记[1]——并发理论基础（上） | Ye Youluo&#39;s Blog</title>
+<link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1593099951272">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Java并发编程笔记[1]——并发理论基础（上） | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="并发编程Bug源头
+解决CPU、内存、I/O设备三者速度差异问题
+为了合理利用CPU的高性能，平衡三者之间的差异，计算机体系结构、操作系统、编译程序都做出了贡献（简记：硬件、操作系统、应用软件三个层面的优化）：
+
+CPU增加缓存，均衡与内存..." />
+    <meta name="keywords" content="并发,笔记,Java" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yeyouluo.github.io">
+  <img class="avatar" src="https://yeyouluo.github.io/images/avatar.png?v=1593099951272" alt="">
+  </a>
+  <h1 class="site-title">
+    Ye Youluo&#39;s Blog
+  </h1>
+  <p class="site-description">
+    知识，本该纯粹真实。 不应为乱象而迷失，因避讳而藏掖。
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Java并发编程笔记[1]——并发理论基础（上）
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-06-18
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+                <a href="https://yeyouluo.github.io/tag/ehEQotb9L/" class="post-tag">
+                  # 并发
+                </a>
+              
+                <a href="https://yeyouluo.github.io/tag/OM-ax3o5af/" class="post-tag">
+                  # 笔记
+                </a>
+              
+                <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
+                  # Java
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="并发编程bug源头">并发编程Bug源头</h2>
+<h3 id="解决cpu-内存-io设备三者速度差异问题">解决CPU、内存、I/O设备三者速度差异问题</h3>
+<p>为了合理利用CPU的高性能，平衡三者之间的差异，计算机体系结构、操作系统、编译程序都做出了贡献（简记：硬件、操作系统、应用软件三个层面的优化）：</p>
+<ul>
+<li>CPU增加缓存，均衡与内存的差异；</li>
+<li>操作系统增加了进程、线程，以分时复用CPU，进而均衡CPU与I/O设备的速度差异；</li>
+<li>编译程序优化指令执行次序，使得缓存能够得到更加合理的应用。</li>
+</ul>
+<!-- more -->
+<h3 id="副作用">副作用</h3>
+<p>由此带来的副作用：</p>
+<ul>
+<li>
+<p>缓存导致可见性问题<br>
+一个线程对共享变量的修改，另一个线程能够立刻看到，称为「可见性」<br>
+CPU多核时代</p>
+</li>
+<li>
+<p>线程切换带来原子性问题<br>
+早期操作系统基于<strong>进程</strong>切换CPU，不同进程间不共享内存空间 ==&gt; 任务切换需要切换内存映射地址<br>
+现代操作系统基于<strong>线程</strong>切换CPU，一个进程创建的所有线程共享内存空间 ==&gt; 切换线程很『轻量』<br>
+一个或者多个操作在CPU执行的过程汇总不被中断的特性，称为「原子性」</p>
+</li>
+<li>
+<p>编译优化带来有序性问题<br>
+「有序性」指程序按照代码的先后顺序执行<br>
+编译器为了优化性能，有时会改变程序中语句的先后顺序</p>
+<p>以上副作用可以简记为：缓存导致的可见性问题、线程切换带来的原子性问题、便以优化带来的有序性问题。</p>
+</li>
+</ul>
+<h2 id="解决可见性有序性问题java内存模型">解决可见性&amp;有序性问题：Java内存模型</h2>
+<h3 id="解决可见性有序性的基本思路">解决可见性&amp;有序性的基本思路</h3>
+<p>导致可见性&amp;有序性问题的根本原因是缓存和编译优化，那么直接的办法就是：禁用缓存、禁用编译优化。但如此就没法享受高性能了。这是典型的因噎废食。<br>
+合理的方案是：<strong>按需禁用缓存及编译优化</strong>。『按需』其实就是程序员来控制何时禁用。</p>
+<h3 id="java内存模型">Java内存模型</h3>
+<p>Java内存模型 规范了JVM如何提供按需禁用缓存和编译优化的方法。<br>
+具体地说，这些方法包括：</p>
+<ul>
+<li>volatile</li>
+<li>synchronized</li>
+<li>final</li>
+<li>Happens-Before规则</li>
+</ul>
+<blockquote>
+<p>注意：这些方法并不是互斥的关系。</p>
+</blockquote>
+<h3 id="happens-before-7个规则">Happens-Before 7个规则</h3>
+<ul>
+<li><strong>程序次序规则</strong>：在一个线程内一段代码的执行结果是有序的。指令还会重排，但是随便它怎么排，结果是按照我们代码的顺序生成的不会变。</li>
+<li><strong>管程锁定规则</strong>：无论是在单线程环境还是多线程环境，对于同一个锁来说，一个线程对这个锁解锁之后，另一个线程获取了这个锁都能看到前一个线程的操作结果。(管程是一种通用的同步原语，synchronized就是管程的实现）</li>
+<li><strong>volatile变量规则</strong>：如果一个线程先去写一个volatile变量，然后一个线程去读这个变量，那么这个写操作的结果一定对读的这个线程可见。</li>
+<li><strong>线程启动规则</strong>：在主线程A执行过程中，启动子线程B，那么线程A在启动子线程B之前对共享变量的修改结果对线程B可见。</li>
+<li><strong>线程终止规则</strong>：在主线程A执行过程中，子线程B终止，那么线程B在终止之前对共享变量的修改结果在线程A中可见。</li>
+<li><strong>线程中断规则</strong>：对线程interrupt()方法的调用先行发生于被中断线程代码检测到中断事件的发生，可以通过Thread.interrupted()检测到是否发生中断。</li>
+<li><strong>传递规则</strong>：happens-before原则具有传递性，即A happens-before B ， B happens-before C，那么A happens-before C。</li>
+<li><strong>对象终结规则</strong>：一个对象的初始化的完成，也就是构造函数执行的结束一定 happens-before它的finalize()方法。</li>
+</ul>
+<blockquote>
+<p>上面的理解来自网络文章<a href="https://baijiahao.baidu.com/s?id=1628346233476376109&amp;wfr=spider&amp;for=pc">面试官：谈谈happens-before?</a>，有删改。</p>
+</blockquote>
+<h2 id="互斥锁解决原子性问题-保护临界资源">互斥锁：解决原子性问题 &amp; 保护临界资源</h2>
+<h3 id="互斥锁模型">互斥锁模型</h3>
+<p><img src="https://yeyouluo.github.io/post-images/1592803711702.png" alt="锁模型" loading="lazy"><br>
+这个模型更像现实世界里面球赛门票的管理，一个座位只允许一个人使用，这个座位就是“受保护资源”，球场的入口就是 Java 类里的方法，而门票就是用来保护资源的“锁”，Java 里的检票工作是由 synchronized 解决的。</p>
+<h3 id="synchronized关键字">synchronized关键字</h3>
+<blockquote>
+<p>当修饰静态方法的时候，锁定的是当前类的 Class 对象；当修饰非静态方法的时候，锁定的是当前实例对象 this。<br>
+<img src="https://yeyouluo.github.io/post-images/1592804280384.png" alt="两把锁保护一个资源示意图" loading="lazy"><br>
+如果一个synchronized修饰的静态方法和一个synchronized修饰的普通方法，都对一个变量（资源）进行了保护（多把锁保护一个资源），这两个临界区并没有互斥的关系，即使加了锁（其实是两把），可能就出现并发问题了。</p>
+</blockquote>
+<blockquote>
+<p>受保护资源和锁之间合理的关联关系应该是 N:1 的关系，也就是说可以用一把锁来保护多个资源，但是不能用多把锁来保护一个资源。</p>
+</blockquote>
+<h3 id="保护多个资源">保护多个资源</h3>
+<h4 id="保护没有关联关系的多个资源">保护没有关联关系的多个资源</h4>
+<p>用不同的锁对受保护资源进行精细化管理，能够提升性能。这种锁还有个名字，叫<strong>细粒度锁</strong>。<br>
+使用细粒度锁可以提高并行度，是<strong>性能优化</strong>的一个重要手段。<br>
+使用细粒度锁是有代价的，这个代价就是可能会导致<strong>死锁</strong>。</p>
+<h4 id="保护有关联关系的多个资源">保护有关联关系的多个资源</h4>
+<p>用同一把锁来保护多个资源，也就是现实世界的“包场”，那在编程领域应该怎么“包场”呢？很简单，只要我们的<strong>锁能覆盖所有受保护资源</strong>就可以了。</p>
+<h3 id="原子性本质">『原子性』本质</h3>
+<p>『原子性』的本质是什么？其实不是不可分割，不可分割只是外在表现，其本质是<strong>多个资源间有一致性的要求，操作的中间状态对外不可见</strong>。例如，在 32 位的机器上写 long 型变量有中间状态（只写了 64 位中的 32 位），在银行转账的操作中也有中间状态（账户 A 减少了 100，账户 B 还没来得及发生变化）。所以<strong>解决原子性问题，是要保证中间状态对外不可见</strong>。</p>
+<h2 id="死锁">死锁</h2>
+<p>有个叫 Coffman 的牛人早就总结过了，只有以下这四个条件都发生时才会出现死锁：</p>
+<ol>
+<li>互斥，共享资源 X 和 Y 只能被一个线程占用；</li>
+<li>占有且等待，线程 T1 已经取得共享资源 X，在等待共享资源 Y 的时候，不释放共享资源 X；</li>
+<li>不可抢占，其他线程不能强行抢占线程 T1 占有的资源；</li>
+<li>循环等待，线程 T1 等待线程 T2 占有的资源，线程 T2 等待线程 T1 占有的资源，就是循环等待。</li>
+</ol>
+<p>反过来分析，也就是说只要我们<strong>破坏其中一个，就可以成功避免死锁的发生</strong>。<br>
+其中，互斥这个条件我们没有办法破坏，因为我们用锁为的就是互斥。不过其他三个条件都是有办法破坏掉的，到底如何做呢？</p>
+<ul>
+<li>对于“占用且等待”这个条件，我们可以一次性申请所有的资源，这样就不存在等待了。</li>
+<li>对于“不可抢占”这个条件，占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源，这样不可抢占这个条件就破坏掉了。</li>
+<li>对于“循环等待”这个条件，可以靠按序申请资源来预防。所谓按序申请，是指资源是有线性顺序的，申请的时候可以先申请资源序号小的，再申请资源序号大的，这样线性化后自然就不存在循环了。</li>
+</ul>
+<h3 id="破坏占用且等待条件">破坏占用且等待条件</h3>
+<p>Allocator。它有两个重要功能，分别是：同时申请资源 apply() 和同时释放资源 free()。账户 Account 类里面持有一个 Allocator 的单例（必须是单例，只能由一个人来分配资源）。当账户 Account 在执行转账操作的时候，首先向 Allocator 同时申请转出账户和转入账户这两个资源，成功后再锁定这两个资源；当转账操作执行完，释放锁之后，我们需通知 Allocator 同时释放转出账户和转入账户这两个资源。</p>
+<pre><code class="language-java">class Allocator {
+  private List&lt;Object&gt; als =  new ArrayList&lt;&gt;();
+  // 一次性申请所有资源
+  synchronized boolean apply(
+    Object from, Object to){
+    if(als.contains(from) ||
+         als.contains(to)){
+      return false;  
+    } else {
+      als.add(from);
+      als.add(to);  
+    }
+    return true;
+  }
+  // 归还资源
+  synchronized void free(
+    Object from, Object to){
+    als.remove(from);
+    als.remove(to);
+  }
+}
+
+class Account {
+  // actr应该为单例
+  private Allocator actr;
+  private int balance;
+  // 转账
+  void transfer(Account target, int amt){
+    // 一次性申请转出账户和转入账户，直到成功
+    while(!actr.apply(this, target))
+      ；
+    try{
+      // 锁定转出账户
+      synchronized(this){              
+        // 锁定转入账户
+        synchronized(target){           
+          if (this.balance &gt; amt){
+            this.balance -= amt;
+            target.balance += amt;
+          }
+        }
+      }
+    } finally {
+      actr.free(this, target)
+    }
+  } 
+}
+</code></pre>
+<h3 id="破坏不可抢占条件">破坏不可抢占条件</h3>
+<p>核心是要能够主动释放它占有的资源，这一点 synchronized 是做不到的。原因是 synchronized 申请资源的时候，如果申请不到，线程直接进入阻塞状态了，而线程进入阻塞状态，啥都干不了，也释放不了线程已经占有的资源。<br>
+<code>java.util.concurrent</code> 这个包下面提供的 Lock 是可以轻松解决这个问题的。</p>
+<h3 id="破坏循环等待条件">破坏循环等待条件</h3>
+<p>破坏这个条件，需要对资源进行排序，然后按序申请资源。这个实现非常简单，我们假设每个账户都有不同的属性 id，这个 id 可以作为排序字段，申请的时候，我们可以按照从小到大的顺序来申请。比如下面代码中，①~⑥处的代码对转出账户（this）和转入账户（target）排序，然后按照序号从小到大的顺序锁定账户。这样就不存在“循环”等待了。</p>
+<pre><code class="language-java">class Account {
+  private int id;
+  private int balance;
+  // 转账
+  void transfer(Account target, int amt){
+    Account left = this        ①
+    Account right = target;    ②
+    if (this.id &gt; target.id) { ③
+      left = target;           ④
+      right = this;            ⑤
+    }                          ⑥
+    // 锁定序号小的账户
+    synchronized(left){
+      // 锁定序号大的账户
+      synchronized(right){ 
+        if (this.balance &gt; amt){
+          this.balance -= amt;
+          target.balance += amt;
+        }
+      }
+    }
+  } 
+}
+</code></pre>
+<h3 id="使用等待-通知机制优化循环等待">使用「等待-通知」机制优化循环等待</h3>
+<h4 id="等待-通知机制">「等待-通知」机制</h4>
+<p>一个完整的「等待 - 通知」机制：线程首先获取互斥锁，当线程要求的条件不满足时，释放互斥锁，进入等待状态；当要求的条件满足时，通知等待的线程，重新获取互斥锁。</p>
+<h4 id="java中等待-通知实现">Java中「等待-通知」实现</h4>
+<p>在 Java 语言里，等待 - 通知机制可以有多种实现方式，比如 Java 语言内置的 synchronized 配合 wait()、notify()、notifyAll() 这三个方法就能轻松实现。</p>
+<pre><code class="language-java">
+class Allocator {
+  private List&lt;Object&gt; als;
+  // 一次性申请所有资源
+  synchronized void apply(
+    Object from, Object to){
+    // 经典写法
+    while(als.contains(from) ||
+         als.contains(to)){
+      try{
+        wait();
+      }catch(Exception e){
+      }   
+    } 
+    als.add(from);
+    als.add(to);  
+  }
+  // 归还资源
+  synchronized void free(
+    Object from, Object to){
+    als.remove(from);
+    als.remove(to);
+    notifyAll();
+  }
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8Bbug%E6%BA%90%E5%A4%B4">并发编程Bug源头</a>
+<ul>
+<li><a href="#%E8%A7%A3%E5%86%B3cpu-%E5%86%85%E5%AD%98-io%E8%AE%BE%E5%A4%87%E4%B8%89%E8%80%85%E9%80%9F%E5%BA%A6%E5%B7%AE%E5%BC%82%E9%97%AE%E9%A2%98">解决CPU、内存、I/O设备三者速度差异问题</a></li>
+<li><a href="#%E5%89%AF%E4%BD%9C%E7%94%A8">副作用</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E5%8F%AF%E8%A7%81%E6%80%A7%E6%9C%89%E5%BA%8F%E6%80%A7%E9%97%AE%E9%A2%98java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B">解决可见性&amp;有序性问题：Java内存模型</a>
+<ul>
+<li><a href="#%E8%A7%A3%E5%86%B3%E5%8F%AF%E8%A7%81%E6%80%A7%E6%9C%89%E5%BA%8F%E6%80%A7%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E8%B7%AF">解决可见性&amp;有序性的基本思路</a></li>
+<li><a href="#java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B">Java内存模型</a></li>
+<li><a href="#happens-before-7%E4%B8%AA%E8%A7%84%E5%88%99">Happens-Before 7个规则</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%92%E6%96%A5%E9%94%81%E8%A7%A3%E5%86%B3%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98-%E4%BF%9D%E6%8A%A4%E4%B8%B4%E7%95%8C%E8%B5%84%E6%BA%90">互斥锁：解决原子性问题 &amp; 保护临界资源</a>
+<ul>
+<li><a href="#%E4%BA%92%E6%96%A5%E9%94%81%E6%A8%A1%E5%9E%8B">互斥锁模型</a></li>
+<li><a href="#synchronized%E5%85%B3%E9%94%AE%E5%AD%97">synchronized关键字</a></li>
+<li><a href="#%E4%BF%9D%E6%8A%A4%E5%A4%9A%E4%B8%AA%E8%B5%84%E6%BA%90">保护多个资源</a>
+<ul>
+<li><a href="#%E4%BF%9D%E6%8A%A4%E6%B2%A1%E6%9C%89%E5%85%B3%E8%81%94%E5%85%B3%E7%B3%BB%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B5%84%E6%BA%90">保护没有关联关系的多个资源</a></li>
+<li><a href="#%E4%BF%9D%E6%8A%A4%E6%9C%89%E5%85%B3%E8%81%94%E5%85%B3%E7%B3%BB%E7%9A%84%E5%A4%9A%E4%B8%AA%E8%B5%84%E6%BA%90">保护有关联关系的多个资源</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8E%9F%E5%AD%90%E6%80%A7%E6%9C%AC%E8%B4%A8">『原子性』本质</a></li>
+</ul>
+</li>
+<li><a href="#%E6%AD%BB%E9%94%81">死锁</a>
+<ul>
+<li><a href="#%E7%A0%B4%E5%9D%8F%E5%8D%A0%E7%94%A8%E4%B8%94%E7%AD%89%E5%BE%85%E6%9D%A1%E4%BB%B6">破坏占用且等待条件</a></li>
+<li><a href="#%E7%A0%B4%E5%9D%8F%E4%B8%8D%E5%8F%AF%E6%8A%A2%E5%8D%A0%E6%9D%A1%E4%BB%B6">破坏不可抢占条件</a></li>
+<li><a href="#%E7%A0%B4%E5%9D%8F%E5%BE%AA%E7%8E%AF%E7%AD%89%E5%BE%85%E6%9D%A1%E4%BB%B6">破坏循环等待条件</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E7%AD%89%E5%BE%85-%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6%E4%BC%98%E5%8C%96%E5%BE%AA%E7%8E%AF%E7%AD%89%E5%BE%85">使用「等待-通知」机制优化循环等待</a>
+<ul>
+<li><a href="#%E7%AD%89%E5%BE%85-%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6">「等待-通知」机制</a></li>
+<li><a href="#java%E4%B8%AD%E7%AD%89%E5%BE%85-%E9%80%9A%E7%9F%A5%E5%AE%9E%E7%8E%B0">Java中「等待-通知」实现</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yeyouluo.github.io/post/jie-jue-postman-wu-fa-fa-song-shu-zu-can-shu-de-wen-ti/">
+              <h3 class="post-title">
+                解决postman无法发送数组参数的问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'ec3e5be64eb825b7eff0',
+    clientSecret: '63e8ef982055260c75a766b87c9b7bbb1b62d150',
+    repo: 'yeyouluo.github.io',
+    owner: 'yeyouluo',
+    admin: ['yeyouluo'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yeyouluo.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
