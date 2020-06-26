@@ -1,0 +1,427 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Java并发编程笔记[2]——并发理论基础（下） | Ye Youluo&#39;s Blog</title>
+<link rel="shortcut icon" href="https://yeyouluo.github.io/favicon.ico?v=1593144791553">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yeyouluo.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Java并发编程笔记[2]——并发理论基础（下） | Ye Youluo&#39;s Blog - Atom Feed" href="https://yeyouluo.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="并发编程中的安全性、活跃性、性能
+
+并发编程是一个复杂的技术领域，微观上涉及到原子性问题、可见性问题和有序性问题，宏观则表现为安全性、活跃性以及性能问题。
+
+并发编程中需要注意的问题主要有3个：安全性、活跃性、性能。
+
+安全性问题
+什么是线..." />
+    <meta name="keywords" content="并发,笔记,Java" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yeyouluo.github.io">
+  <img class="avatar" src="https://yeyouluo.github.io/images/avatar.png?v=1593144791553" alt="">
+  </a>
+  <h1 class="site-title">
+    Ye Youluo&#39;s Blog
+  </h1>
+  <p class="site-description">
+    知识，本该纯粹真实。 不应为乱象而迷失，因避讳而藏掖。
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Java并发编程笔记[2]——并发理论基础（下）
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-06-26
+              </span>
+              <span>
+                18 min read
+              </span>
+              
+                <a href="https://yeyouluo.github.io/tag/ehEQotb9L/" class="post-tag">
+                  # 并发
+                </a>
+              
+                <a href="https://yeyouluo.github.io/tag/OM-ax3o5af/" class="post-tag">
+                  # 笔记
+                </a>
+              
+                <a href="https://yeyouluo.github.io/tag/fdLQZhaWX/" class="post-tag">
+                  # Java
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="并发编程中的安全性-活跃性-性能">并发编程中的安全性、活跃性、性能</h2>
+<blockquote>
+<p>并发编程是一个复杂的技术领域，微观上涉及到原子性问题、可见性问题和有序性问题，宏观则表现为安全性、活跃性以及性能问题。</p>
+</blockquote>
+<p>并发编程中需要注意的问题主要有3个：安全性、活跃性、性能。</p>
+<!-- more -->
+<h3 id="安全性问题">安全性问题</h3>
+<p>什么是线程安全呢？其实本质上就是<strong>正确性</strong>，而正确性的含义就是<strong>程序按照我们期望的执行</strong>，不要让我们感到意外。我们已经见识过很多诡异的 Bug，都是出乎我们预料的，它们都没有按照我们期望的执行。<br>
+如何才能写出线程安全的程序呢？之前的文章中已经介绍了并发 Bug 的三个主要源头：原子性问题、可见性问题和有序性问题。也就是说，<strong>理论上线程安全的程序，就要避免出现原子性问题、可见性问题和有序性问题</strong>。<br>
+是不是所有的代码都需要认真分析一遍是否存在这三个问题呢？当然不是，其实只有一种情况需要：<strong>存在共享数据并且该数据会发生变化</strong>，通俗地讲就是<strong>有多个线程会同时读写同一数据</strong>。那如果能够做到不共享数据或者数据状态不发生变化，不就能够保证线程的安全性了嘛。有不少技术方案都是基于这个理论的，例如线程本地存储（Thread Local Storage，TLS）、不变模式等等。<br>
+当多个线程同时访问同一数据，并且至少有一个线程会写这个数据的时候，如果我们不采取防护措施，那么就会导致并发 Bug，对此还有一个专业的术语，叫做<strong>数据竞争</strong>（Data Race）。<br>
+<strong>竞态条件</strong>（Race Condition），指的是<strong>程序的执行结果依赖线程执行的顺序</strong>。<br>
+面对数据竞争和竞态条件问题，又该如何保证线程的安全性呢？其实这两类问题，都可以用<strong>互斥</strong>这个技术方案，而实现互斥的方案有很多，CPU 提供了相关的互斥指令，操作系统、编程语言也会提供相关的 API。从逻辑上来看，我们可以统一归为：<strong>锁</strong>。</p>
+<h3 id="活跃性问题">活跃性问题</h3>
+<p>所谓活跃性问题，指的是<strong>某个操作无法执行下去</strong>。我们常见的『<strong>死锁</strong>』就是一种典型的活跃性问题，当然除了死锁外，还有两种情况，分别是『<strong>活锁</strong>』和『<strong>饥饿</strong>』。</p>
+<h4 id="活锁">活锁</h4>
+<p><em>有时线程虽然没有发生阻塞，但仍然会存在执行不下去的情况</em>，这就是所谓的『<strong>活锁</strong>』。<br>
+解决『活锁』的方案很简单，谦让时，尝试等待一个随机的时间就可以了。「等待一个随机时间」的方案虽然很简单，却非常有效，Raft 这样知名的分布式一致性算法中也用到了它。</p>
+<h4 id="饥饿">饥饿</h4>
+<p>『饥饿』指的是<em>线程因无法访问所需资源而无法执行下去的情况</em>。“不患寡，而患不均”，如果线程优先级“不均”，在 CPU 繁忙的情况下，优先级低的线程得到执行的机会很小，就可能发生线程“饥饿”；持有锁的线程，如果执行的时间过长，也可能导致“饥饿”问题。<br>
+解决“饥饿”问题的方案很简单，有三种方案：一是保证资源充足，二是公平地分配资源，三就是避免持有锁的线程长时间执行。这三个方案中，方案一和方案三的适用场景比较有限，因为很多场景下，资源的稀缺性是没办法解决的，持有锁的线程执行的时间也很难缩短。倒是方案二的适用场景相对来说更多一些。<br>
+那如何公平地分配资源呢？在并发编程里，主要是使用『<strong>公平锁</strong>』。所谓公平锁，是一种先来后到的方案，线程的等待是有顺序的，排在等待队列前面的线程会优先获得资源。</p>
+<h3 id="性能问题">性能问题</h3>
+<p>使用“锁”要非常小心，但是如果小心过度，也可能出“性能问题”。“锁”的过度使用可能导致串行化的范围过大，这样就不能够发挥多线程的优势了，而我们之所以使用多线程搞并发程序，为的就是提升性能。所以我们要尽量减少串行。<br>
+使用锁的时候一定要关注对性能的影响。 那怎么才能避免锁带来的性能问题呢？这个问题很复杂，<strong>Java SDK 并发包里之所以有那么多东西，有很大一部分原因就是要提升在某个特定领域的性能</strong>。<br>
+从方案层面，我们可以这样来解决这个问题。<br>
+第一，既然使用锁会带来性能问题，那最好的方案自然就是使用<strong>无锁</strong>的算法和数据结构了。在这方面有很多相关的技术，例如线程本地存储 (Thread Local Storage, TLS)、写入时复制 (Copy-on-write)、乐观锁等；Java 并发包里面的原子类也是一种无锁的数据结构；Disruptor 则是一个无锁的内存队列，性能都非常好……<br>
+第二，<strong>减少锁持有的时间</strong>。互斥锁本质上是将并行的程序串行化，所以要增加并行度，一定要减少持有锁的时间。这个方案具体的实现技术也有很多，例如使用细粒度的锁，一个典型的例子就是 Java 并发包里的 ConcurrentHashMap，它使用了所谓分段锁的技术（这个技术后面我们会详细介绍）；还可以使用读写锁，也就是读是无锁的，只有写的时候才会互斥。<br>
+性能方面的度量指标有很多，有三个指标非常重要，就是：吞吐量、延迟和并发量。</p>
+<ul>
+<li>吞吐量：指的是单位时间内能处理的请求数量。吞吐量越高，说明性能越好。</li>
+<li>延迟：指的是从发出请求到收到响应的时间。延迟越小，说明性能越好。</li>
+<li>并发量：指的是能同时处理的请求数量，一般来说随着并发量的增加、延迟也会增加。所以延迟这个指标，一般都会是基于并发量来说的。例如并发量是 1000 的时候，延迟是 50 毫秒。</li>
+</ul>
+<h3 id="管程并发编程的万能钥匙">管程：并发编程的万能钥匙</h3>
+<p>管程（Monitor）是一把解决并发编程的 万能钥匙。<br>
+『<strong>管程</strong>』，指的是<strong>管理共享变量以及对共享变量的操作过程，让他们支持并发</strong>。翻译为 Java 领域的语言，就是管理类的成员变量和成员方法，让这个类是线程安全的。<br>
+Java 内置的管程方案（synchronized）使用简单，synchronized 关键字修饰的代码块，在编译期会自动生成相关加锁和解锁的代码，但是仅支持一个条件变量；而 Java SDK 并发包实现的管程支持多个条件变量，不过并发包里的锁，需要开发人员自己进行加锁和解锁操作。<br>
+并发编程里两大核心问题——互斥和同步，都可以由管程来帮你解决。学好管程，理论上所有的并发问题你都可以解决，并且很多并发工具类底层都是管程实现的，所以学好管程，就是相当于掌握了一把并发编程的万能钥匙。<br>
+<img src="https://yeyouluo.github.io/post-images/1593140500490.png" alt="" loading="lazy"><br>
+管程是一种概念，任何语言都可以通用。<br>
+在java中，每个加锁的对象都绑定着一个管程（监视器）<br>
+线程访问加锁对象，就是去拥有一个监视器的过程。如一个病人去门诊室看医生，医生是共享资源，门锁锁定医生，病人去看医生，就是访问医生这个共享资源，门诊室其实是监视器（管程）。<br>
+所有线程访问共享资源，都需要先拥有监视器。就像所有病人看病都需要先拥有进入门诊室的资格。<br>
+监视器至少有两个等待队列。一个是进入监视器的等待队列，一个是条件变量对应的等待队列。后者可以有多个。就像一个病人进入门诊室诊断后，需要去验血，那么它需要去抽血室排队等待。另外一个病人心脏不舒服，需要去拍胸片，去拍摄室等待。<br>
+监视器要求的条件满足后，位于条件变量下等待的线程需要重新在门诊室门外排队，等待进入监视器。就像抽血的那位，抽完后，拿到了化验单，然后，重新回到门诊室等待，然后进入看病，然后退出，医生通知下一位进入。</p>
+<p>总结起来就是，管程就是一个对象监视器。任何线程想要访问该资源，就要排队进入监控范围。进入之后，接受检查，不符合条件，则要继续等待，直到被通知，然后继续进入监视器。</p>
+<h2 id="线程生命周期">线程生命周期</h2>
+<h3 id="通用线程生命周期五态模型">通用线程生命周期——五态模型</h3>
+<p><img src="https://yeyouluo.github.io/post-images/1593140878869.png" alt="" loading="lazy"><br>
+这五种状态在不同编程语言里会有简化合并。例如，C 语言的 POSIX Threads 规范，就把初始状态和可运行状态合并了；Java 语言里则把可运行状态和运行状态合并了，这两个状态在操作系统调度层面有用，而 JVM 层面不关心这两个状态，因为 JVM 把线程调度交给操作系统处理了。<br>
+除了简化合并，这五种状态也有可能被细化，比如，Java 语言里就细化了休眠状态（这个下面我们会详细讲解）。</p>
+<h3 id="java线程生命周期">Java线程生命周期</h3>
+<p>Java 语言中线程共有六种状态，分别是：</p>
+<ul>
+<li>NEW（初始化状态）</li>
+<li>RUNNABLE（可运行 / 运行状态）</li>
+<li>BLOCKED（阻塞状态）</li>
+<li>WAITING（无时限等待）</li>
+<li>TIMED_WAITING（有时限等待）</li>
+<li>TERMINATED（终止状态）<br>
+<img src="https://yeyouluo.github.io/post-images/1593140973934.png" alt="" loading="lazy"></li>
+</ul>
+<h4 id="状态转换">状态转换</h4>
+<h5 id="runnable-blocked">RUNNABLE ==&gt; BLOCKED</h5>
+<p>只有一种场景会触发这种转换，就是<strong>线程等待 synchronized 的隐式锁</strong>。synchronized 修饰的方法、代码块同一时刻只允许一个线程执行，其他线程只能等待，这种情况下，等待的线程就会从 RUNNABLE 转换到 BLOCKED 状态。而当等待的线程获得 synchronized 隐式锁时，就又会从 BLOCKED 转换到 RUNNABLE 状态。</p>
+<blockquote>
+<p>线程调用阻塞式 API 时，是否会转换到 BLOCKED 状态呢？在操作系统层面，线程是会转换到休眠状态的，但是在 JVM 层面，Java 线程的状态不会发生变化，也就是说 Java 线程的状态会依然保持 RUNNABLE 状态。JVM 层面并不关心操作系统调度相关的状态，因为在 JVM 看来，等待 CPU 使用权（操作系统层面此时处于可执行状态）与等待 I/O（操作系统层面此时处于休眠状态）没有区别，都是在等待某个资源，所以都归入了 RUNNABLE 状态。而我们平时所谓的 Java 在调用阻塞式 API 时，线程会阻塞，指的是操作系统线程的状态，并不是 Java 线程的状态。</p>
+</blockquote>
+<h5 id="runnable-waiting">RUNNABLE ==&gt; WAITING</h5>
+<p>有三种场景会触发这种转换。<br>
+第一种场景，获得 synchronized 隐式锁的线程，调用无参数的 Object.wait() 方法。<br>
+第二种场景，调用无参数的 Thread.join() 方法。<br>
+第三种场景，调用 LockSupport.park() 方法。Java 并发包中的锁，都是基于 LockSupport实现的。调用 LockSupport.park() 方法，当前线程会阻塞，线程的状态会从 RUNNABLE 转换到 WAITING。调用 LockSupport.unpark(Thread thread) 可唤醒目标线程，目标线程的状态又会从 WAITING 状态转换到 RUNNABLE。</p>
+<h5 id="runnable-timed_waiting">RUNNABLE ==&gt; TIMED_WAITING</h5>
+<p>有五种场景会触发这种转换：</p>
+<ol>
+<li>调用带超时参数的 Thread.sleep(long millis) 方法；</li>
+<li>获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方法；</li>
+<li>调用带超时参数的 Thread.join(long millis) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</li>
+</ol>
+<p>这里你会发现 TIMED_WAITING 和 WAITING 状态的区别，仅仅是触发条件多了超时参数。</p>
+<h5 id="new-runnable">NEW ==&gt; RUNNABLE</h5>
+<p>从 NEW 状态转换到 RUNNABLE 状态很简单，只要调用线程对象的 start() 方法就可以了。</p>
+<h5 id="runnable-terminated">RUNNABLE ==&gt; TERMINATED</h5>
+<ul>
+<li>线程执行完 run() 方法后，会自动转换到 TERMINATED 状态。</li>
+<li>如果执行 run() 方法的时候异常抛出，也会导致线程终止。</li>
+<li>强制中断 run() 方法的执行：①stop() 方法（@Deprecated），② interrupt() 方法。</li>
+</ul>
+<blockquote>
+<p>stop() 方法会真的杀死线程，不给线程喘息的机会，如果线程持有 ReentrantLock 锁，被 stop() 的线程并不会自动调用 ReentrantLock 的 unlock() 去释放锁，那其他线程就再也没机会获得 ReentrantLock 锁，这实在是太危险了。所以该方法就不建议使用了，类似的方法还有 suspend() 和 resume() 方法，这两个方法同样也都不建议使用了。</p>
+</blockquote>
+<h4 id="理解java线程生命周期的意义">理解Java线程生命周期的意义</h4>
+<p>Java 线程的各种状态以及生命周期对于诊断多线程 Bug 非常有帮助，多线程程序很难调试，出了 Bug 基本上都是靠日志，靠线程 dump 来跟踪问题，分析线程 dump 的一个基本功就是分析线程状态，大部分的死锁、饥饿、活锁问题都需要跟踪分析线程的状态。同时，本文介绍的线程生命周期具备很强的通用性，对于学习其他语言的多线程编程也有很大的帮助。<br>
+可以通过 jstack 命令或者Java VisualVM这个可视化工具将 JVM 所有的线程栈信息导出来，完整的线程栈信息不仅包括线程的当前状态、调用栈，还包括了锁的信息。导出线程栈，分析线程状态是诊断并发问题的一个重要工具。</p>
+<h2 id="创建多少线程合适">创建多少线程合适</h2>
+<p>所谓提升性能，从度量的角度，主要是<strong>降低延迟，提高吞吐量</strong>（延迟是时间维度，吞吐量是空间维度）。这也是我们使用多线程的主要目的。<br>
+在并发编程领域，提升性能本质上就是<strong>提升硬件的利用率</strong>，再具体点来说，就是提升** I/O 的利用率**和 <strong>CPU 的利用率</strong>。<br>
+对于 <em>CPU 密集型的计算场景</em>，理论上“线程的数量 =CPU 核数”就是最合适的。不过在工程上，线程的数量一般会设置为「CPU 核数 +1」。</p>
+<blockquote>
+<p>当线程因为偶尔的内存页失效或其他原因导致阻塞时，这个额外的线程可以顶上，从而保证 CPU 的利用率。</p>
+</blockquote>
+<p>对于 I/O 密集型计算场景，最佳的线程数是与程序中 CPU 计算和 I/O 操作的耗时比相关的。<br>
+单核：<code>最佳线程数 =1 +（I/O 耗时 / CPU 耗时）</code><br>
+多核：<code>最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]</code><br>
+经验值：<code>最佳线程数 = 2 * CPU 的核数 + 1</code></p>
+<blockquote>
+<p>测试IO/CPU 这个耗时比例可以使用APM工具(Application Performance Monitor)。可以参考的APM工具：Google Dapper、zipkin、pinpoint、Skywalking。<br>
+实际工作中，不同的 I/O 模型对最佳线程数的影响非常大，例如大名鼎鼎的 Nginx 用的是非阻塞 I/O，采用的是多进程单线程结构，Nginx 本来是一个 I/O 密集型系统，但是最佳进程数设置的却是 CPU 的核数，完全参考的是 CPU 密集型的算法。所以，理论我们还是要活学活用。</p>
+</blockquote>
+<h2 id="用面向对象的思想写并发编程">用面向对象的思想写并发编程</h2>
+<p>在 Java 语言里，面向对象思想能够让并发编程变得更简单。<br>
+如何才能用面向对象思想写好并发程序呢？结合我自己的工作经验来看，我觉得你可以从封装共享变量、识别共享变量间的约束条件和制定并发访问策略这三个方面下手。</p>
+<h3 id="封装共享变量">封装共享变量</h3>
+<p>将共享变量作为对象属性封装在内部，对所有公共方法制定并发访问策略。</p>
+<pre><code class="language-java">public class Counter {
+  private long value;
+  synchronized long get(){
+    return value;
+  }
+  synchronized long addOne(){
+    return ++value;
+  }
+}
+</code></pre>
+<p>对于这些不会发生变化的共享变量，建议用 final 关键字来修饰。这样既能避免并发问题，也能很明了地表明你的设计意图，让后面接手你程序的兄弟知道，你已经考虑过这些共享变量的并发安全问题了。</p>
+<h3 id="识别共享变量间的约束条件">识别共享变量间的约束条件</h3>
+<p>识别共享变量间的约束条件非常重要。因为这些约束条件，决定了并发访问策略。例如，库存管理里面有个合理库存的概念，库存量不能太高，也不能太低，它有一个上限和一个下限。在类 SafeWM 中，声明了两个成员变量 upper 和 lower，分别代表库存上限和库存下限，这两个变量用了 AtomicLong 这个原子类，原子类是线程安全的，所以这两个成员变量的 set 方法就不需要同步了。</p>
+<pre><code class="language-java">public class SafeWM {
+  // 库存上限
+  private final AtomicLong upper = new AtomicLong(0);
+  // 库存下限
+  private final AtomicLong lower = new AtomicLong(0);
+  // 设置库存上限
+  void setUpper(long v){
+    // 检查参数合法性
+    if (v &lt; lower.get()) {
+      throw new IllegalArgumentException();
+    }
+    upper.set(v);
+  }
+  // 设置库存下限
+  void setLower(long v){
+    // 检查参数合法性
+    if (v &gt; upper.get()) {
+      throw new IllegalArgumentException();
+    }
+    lower.set(v);
+  }
+  // 省略其他业务代码
+}
+</code></pre>
+<p>在设计阶段，我们一定要识别出所有共享变量之间的约束条件，如果约束条件识别不足，很可能导致制定的并发访问策略南辕北辙。<br>
+共享变量之间的约束条件，反映在代码里，基本上都会有 if 语句，所以，一定要<strong>特别注意竞态条件</strong>。</p>
+<h3 id="制定并发访问策略">制定并发访问策略</h3>
+<p>从方案上来看，无外乎就是以下“三件事”。</p>
+<ul>
+<li>避免共享：避免共享的技术主要是利于线程本地存储以及为每个任务分配独立的线程。</li>
+<li>不变模式：这个在 Java 领域应用的很少，但在其他领域却有着广泛的应用，例如 Actor 模式、CSP 模式以及函数式编程的基础都是不变模式。</li>
+<li>管程及其他同步工具：Java 领域万能的解决方案是管程，但是对于很多特定场景，使用 Java 并发包提供的读写锁、并发容器等同步工具会更好。</li>
+</ul>
+<h3 id="宏观原则">宏观原则</h3>
+<p>除了这些方案之外，还有一些宏观的原则需要你了解。这些宏观原则，有助于你写出“健壮”的并发程序。这些原则主要有以下三条。</p>
+<ul>
+<li>优先使用成熟的工具类：Java SDK 并发包里提供了丰富的工具类，基本上能满足你日常的需要，建议你熟悉它们，用好它们，而不是自己再“发明轮子”，毕竟并发工具类不是随随便便就能发明成功的。</li>
+<li>迫不得已时才使用低级的同步原语：低级的同步原语主要指的是 synchronized、Lock、Semaphore 等，这些虽然感觉简单，但实际上并没那么简单，一定要小心使用。</li>
+<li>避免过早优化：安全第一，并发程序首先要保证安全，出现性能瓶颈后再优化。在设计期和开发期，很多人经常会情不自禁地预估性能的瓶颈，并对此实施优化，但残酷的现实却是：性能瓶颈不是你想预估就能预估的。</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7-%E6%B4%BB%E8%B7%83%E6%80%A7-%E6%80%A7%E8%83%BD">并发编程中的安全性、活跃性、性能</a>
+<ul>
+<li><a href="#%E5%AE%89%E5%85%A8%E6%80%A7%E9%97%AE%E9%A2%98">安全性问题</a></li>
+<li><a href="#%E6%B4%BB%E8%B7%83%E6%80%A7%E9%97%AE%E9%A2%98">活跃性问题</a>
+<ul>
+<li><a href="#%E6%B4%BB%E9%94%81">活锁</a></li>
+<li><a href="#%E9%A5%A5%E9%A5%BF">饥饿</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98">性能问题</a></li>
+<li><a href="#%E7%AE%A1%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%87%E8%83%BD%E9%92%A5%E5%8C%99">管程：并发编程的万能钥匙</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">线程生命周期</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8%E7%BA%BF%E7%A8%8B%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BA%94%E6%80%81%E6%A8%A1%E5%9E%8B">通用线程生命周期——五态模型</a></li>
+<li><a href="#java%E7%BA%BF%E7%A8%8B%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">Java线程生命周期</a>
+<ul>
+<li><a href="#%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2">状态转换</a>
+<ul>
+<li><a href="#runnable-blocked">RUNNABLE ==&gt; BLOCKED</a></li>
+<li><a href="#runnable-waiting">RUNNABLE ==&gt; WAITING</a></li>
+<li><a href="#runnable-timed_waiting">RUNNABLE ==&gt; TIMED_WAITING</a></li>
+<li><a href="#new-runnable">NEW ==&gt; RUNNABLE</a></li>
+<li><a href="#runnable-terminated">RUNNABLE ==&gt; TERMINATED</a></li>
+</ul>
+</li>
+<li><a href="#%E7%90%86%E8%A7%A3java%E7%BA%BF%E7%A8%8B%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9A%84%E6%84%8F%E4%B9%89">理解Java线程生命周期的意义</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%A4%9A%E5%B0%91%E7%BA%BF%E7%A8%8B%E5%90%88%E9%80%82">创建多少线程合适</a></li>
+<li><a href="#%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%80%9D%E6%83%B3%E5%86%99%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B">用面向对象的思想写并发编程</a>
+<ul>
+<li><a href="#%E5%B0%81%E8%A3%85%E5%85%B1%E4%BA%AB%E5%8F%98%E9%87%8F">封装共享变量</a></li>
+<li><a href="#%E8%AF%86%E5%88%AB%E5%85%B1%E4%BA%AB%E5%8F%98%E9%87%8F%E9%97%B4%E7%9A%84%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6">识别共享变量间的约束条件</a></li>
+<li><a href="#%E5%88%B6%E5%AE%9A%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AE%E7%AD%96%E7%95%A5">制定并发访问策略</a></li>
+<li><a href="#%E5%AE%8F%E8%A7%82%E5%8E%9F%E5%88%99">宏观原则</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yeyouluo.github.io/post/java-bing-fa-bian-cheng-bi-ji-1-bing-fa-li-lun-ji-chu/">
+              <h3 class="post-title">
+                Java并发编程笔记[1]——并发理论基础（上）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'ec3e5be64eb825b7eff0',
+    clientSecret: '63e8ef982055260c75a766b87c9b7bbb1b62d150',
+    repo: 'yeyouluo.github.io',
+    owner: 'yeyouluo',
+    admin: ['yeyouluo'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yeyouluo.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
