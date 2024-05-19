@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.zPfxmoh3.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"base/linux/linux-level.md","filePath":"base/linux/linux-level.md"}'),n={name:"base/linux/linux-level.md"};function l(s,r,i,o,c,p){return a(),t("div")}const d=e(n,[["render",l]]);export{_ as __pageData,d as default};

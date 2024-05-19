@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.zPfxmoh3.js";const u=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"base/linux/linux-vim.md","filePath":"base/linux/linux-vim.md"}'),n={name:"base/linux/linux-vim.md"};function i(s,r,o,c,l,m){return a(),t("div")}const _=e(n,[["render",i]]);export{u as __pageData,_ as default};
