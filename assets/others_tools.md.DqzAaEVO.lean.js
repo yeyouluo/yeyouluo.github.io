@@ -1,1 +1,0 @@
-import{_ as e,c as r,o as a,a1 as t}from"./chunks/framework.biRBrEtS.js";const p=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"others/tools.md","filePath":"others/tools.md"}'),l={name:"others/tools.md"},o=t("",12),n=[o];function h(i,s,c,d,_,f){return a(),r("div",null,n)}const m=e(l,[["render",h]]);export{p as __pageData,m as default};
